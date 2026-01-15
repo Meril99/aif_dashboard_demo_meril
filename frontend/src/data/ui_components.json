@@ -109,7 +109,10 @@
                   ],
                   "color": "#4CAF50",
                   "data_binding": {
-                    "endpoint": "/measure/"
+                    "endpoint": "/measure/",
+                    "filters": {
+                      "metric_id": 1
+                    }
                   },
                   "display_order": 0,
                   "id": "i1cekk",
@@ -165,7 +168,10 @@
                   ],
                   "color": "#3498db",
                   "data_binding": {
-                    "endpoint": "/measure/"
+                    "endpoint": "/measure/",
+                    "filters": {
+                      "metric_id": 1
+                    }
                   },
                   "display_order": 0,
                   "id": "ig71rx",
@@ -214,7 +220,10 @@
                   ],
                   "color": "#8884d8",
                   "data_binding": {
-                    "endpoint": "/measure/"
+                    "endpoint": "/measure/",
+                    "filters": {
+                      "metric_id": 1
+                    }
                   },
                   "display_order": 0,
                   "id": "irekdw",

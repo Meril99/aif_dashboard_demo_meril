@@ -44,9 +44,25 @@ export const Renderer: React.FC<RendererProps> = ({ component, styles }) => {
         // Always use backend base URL for relative endpoints
         const backendBase = "http://localhost:8000";
         
-        const url = endpoint.startsWith("/") 
+        // Build URL with filter parameters if provided
+        let url = endpoint.startsWith("/") 
           ? backendBase + endpoint
           : endpoint;
+        
+        // Add filter parameters from data_binding.filters
+        const filters = component.data_binding?.filters;
+        if (filters && typeof filters === 'object') {
+          const queryParams = new URLSearchParams();
+          Object.entries(filters).forEach(([key, value]) => {
+            if (value !== null && value !== undefined) {
+              queryParams.append(key, String(value));
+            }
+          });
+          const queryString = queryParams.toString();
+          if (queryString) {
+            url += (url.includes('?') ? '&' : '?') + queryString;
+          }
+        }
         
         axios.get(url)
           .then((res) => {

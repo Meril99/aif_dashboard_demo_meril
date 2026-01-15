@@ -559,6 +559,171 @@ Apply fixes in this order:
 
 ---
 
+## FIX 13: Add Filtering Support (Optional Feature)
+
+**File**: `backend/main_api.py`
+
+**Why**: Enable filtering of data on the backend for better performance and data control.
+
+**Search for the `get_all_measure()` function**:
+```python
+@app.get("/measure/")
+def get_all_measure(detailed: bool = False, database: Session = Depends(get_db)) -> list:
+    query = database.query(Measure)
+```
+
+**Replace with**:
+```python
+@app.get("/measure/")
+def get_all_measure(detailed: bool = False, metric_id: int = None, database: Session = Depends(get_db)) -> list:
+    query = database.query(Measure)
+    if metric_id is not None:
+        query = query.filter(Measure.metric_id == metric_id)
+```
+
+**Then find both `if detailed:` blocks in the same function and ensure they both apply the filter before returning**.
+
+---
+
+## FIX 14: Add Filter Support to Renderer (Frontend)
+
+**File**: `frontend/src/components/Renderer.tsx`
+
+**Why**: Frontend needs to send filter parameters to the backend API when charts have filters configured.
+
+**Search for the chart data fetch logic** (around line 37-76):
+```tsx
+const url = apiEndpoint + endpoint;
+const response = await axios.get<any[]>(url);
+```
+
+**Replace with**:
+```tsx
+const url = apiEndpoint + endpoint;
+let fetchUrl = url;
+
+// Add filter parameters if configured
+const filters = component.data_binding?.filters;
+if (filters && typeof filters === 'object') {
+  const queryParams = new URLSearchParams();
+  Object.entries(filters).forEach(([key, value]) => {
+    if (value !== null && value !== undefined) {
+      queryParams.append(key, String(value));
+    }
+  });
+  const queryString = queryParams.toString();
+  if (queryString) {
+    fetchUrl += (fetchUrl.includes('?') ? '&' : '?') + queryString;
+  }
+}
+
+const response = await axios.get<any[]>(fetchUrl);
+```
+
+---
+
+## FIX 15: Add Filter Support to TableComponent (Frontend)
+
+**File**: `frontend/src/components/table/TableComponent.tsx`
+
+**Why**: Tables also need to support the same filtering mechanism as charts.
+
+**Search for the table data fetch logic** (around line 83-110):
+```tsx
+const url = `${apiEndpoint}${endpoint}`;
+const response = await axios.get<any[]>(url);
+```
+
+**Replace with**:
+```tsx
+const url = `${apiEndpoint}${endpoint}`;
+let fetchUrl = url;
+
+// Add filter parameters if configured
+const filters = component.data_binding?.filters;
+if (filters && typeof filters === 'object') {
+  const queryParams = new URLSearchParams();
+  Object.entries(filters).forEach(([key, value]) => {
+    if (value !== null && value !== undefined) {
+      queryParams.append(key, String(value));
+    }
+  });
+  const queryString = queryParams.toString();
+  if (queryString) {
+    fetchUrl += (fetchUrl.includes('?') ? '&' : '?') + queryString;
+  }
+}
+
+const response = await axios.get<any[]>(fetchUrl);
+```
+
+---
+
+## FIX 16: Add Filters to Chart Configuration in JSON
+
+**File**: `frontend/src/data/ui_components.json`
+
+**Why**: Configure which filters to apply to each chart when displaying data.
+
+**For Line Chart** - Search for:
+```json
+"id": "i1cekk",
+"data_binding": {
+  "endpoint": "/measure/"
+}
+```
+
+**Replace with**:
+```json
+"id": "i1cekk",
+"data_binding": {
+  "endpoint": "/measure/",
+  "filters": {
+    "metric_id": 1
+  }
+}
+```
+
+**For Bar Chart** - Search for:
+```json
+"id": "ig71rx",
+"data_binding": {
+  "endpoint": "/measure/"
+}
+```
+
+**Replace with**:
+```json
+"id": "ig71rx",
+"data_binding": {
+  "endpoint": "/measure/",
+  "filters": {
+    "metric_id": 1
+  }
+}
+```
+
+**For Radar Chart** - Search for:
+```json
+"id": "irekdw",
+"data_binding": {
+  "endpoint": "/measure/"
+}
+```
+
+**Replace with**:
+```json
+"id": "irekdw",
+"data_binding": {
+  "endpoint": "/measure/",
+  "filters": {
+    "metric_id": 1
+  }
+}
+```
+
+---
+
 ## Summary Checklist
 
 - [ ] Fix 1: Database path in main_api.py
@@ -573,5 +738,9 @@ Apply fixes in this order:
 - [ ] Fix 10: Fix Line Chart field reading in Renderer.tsx
 - [ ] Fix 11: Fix Bar Chart field reading in Renderer.tsx
 - [ ] Fix 12: Fix Radar Chart field reading in Renderer.tsx
+- [ ] **[Optional]** Fix 13: Add filtering support to backend API
+- [ ] **[Optional]** Fix 14: Add filter support to Renderer component
+- [ ] **[Optional]** Fix 15: Add filter support to TableComponent
+- [ ] **[Optional]** Fix 16: Add filters to chart configuration
 - [ ] Rebuild: `docker-compose down && docker-compose up -d --build`
 - [ ] Test: Open http://localhost:3000 and verify data displays

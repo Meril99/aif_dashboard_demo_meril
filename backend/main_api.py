@@ -1862,7 +1862,7 @@ async def get_evaluates_of_evaluation(evaluation_id: int, database: Session = De
  
 
 @app.get("/measure/", response_model=None, tags=["Measure"])
-def get_all_measure(detailed: bool = False, database: Session = Depends(get_db)) -> list:
+def get_all_measure(detailed: bool = False, metric_id: int = None, database: Session = Depends(get_db)) -> list:
     from sqlalchemy.orm import joinedload
     
     # Use detailed=true to get entities with eagerly loaded relationships (for tables with lookup columns)
@@ -1872,6 +1872,11 @@ def get_all_measure(detailed: bool = False, database: Session = Depends(get_db))
         query = query.options(joinedload(Measure.observation))
         query = query.options(joinedload(Measure.metric))
         query = query.options(joinedload(Measure.measurand))
+        
+        # Apply filters if provided
+        if metric_id is not None:
+            query = query.filter(Measure.metric_id == metric_id)
+        
         measure_list = query.all()
         
         # Serialize with relationships included
@@ -1908,7 +1913,13 @@ def get_all_measure(detailed: bool = False, database: Session = Depends(get_db))
         return result
     else:
         # Default: return flat entities (faster for charts/widgets without lookup columns)
-        return database.query(Measure).all()
+        query = database.query(Measure)
+        
+        # Apply filters if provided
+        if metric_id is not None:
+            query = query.filter(Measure.metric_id == metric_id)
+        
+        return query.all()
 
 
 @app.get("/measure/count/", response_model=None, tags=["Measure"])

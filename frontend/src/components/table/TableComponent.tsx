@@ -96,9 +96,25 @@ export const TableComponent: React.FC<Props> = ({
     if (!endpoint) return;
     const backendBase = "http://localhost:8000";
     
-    const url = endpoint.startsWith("/") 
+    // Build URL with filter parameters if provided
+    let url = endpoint.startsWith("/") 
       ? backendBase + endpoint
       : endpoint;
+    
+    // Add filter parameters from dataBinding.filters
+    const filters = dataBinding?.filters;
+    if (filters && typeof filters === 'object') {
+      const queryParams = new URLSearchParams();
+      Object.entries(filters).forEach(([key, value]) => {
+        if (value !== null && value !== undefined) {
+          queryParams.append(key, String(value));
+        }
+      });
+      const queryString = queryParams.toString();
+      if (queryString) {
+        url += (url.includes('?') ? '&' : '?') + queryString;
+      }
+    }
     
     try {
       const response = await axios.get(url);
