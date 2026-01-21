@@ -22,7 +22,7 @@ logger = logging.getLogger(__name__)
 ############################################
 
 def init_db():
-    SQLALCHEMY_DATABASE_URL = "sqlite:///./ai_sandbox_PSA_13_Jan_2026.db"
+    SQLALCHEMY_DATABASE_URL = "sqlite:///./lux_data_2026_map.db"
     engine = create_engine(
         SQLALCHEMY_DATABASE_URL, 
         connect_args={"check_same_thread": False},
@@ -812,7 +812,6 @@ async def create_element(element_data: ElementCreate, database: Session = Depend
     db_element = Element(
         name=element_data.name,
         description=element_data.description,
-,
         project_id=element_data.project        )
 
     database.add(db_element)
@@ -874,7 +873,6 @@ async def bulk_create_element(items: list[ElementCreate], database: Session = De
             db_element = Element(
                 name=item_data.name,
                 description=item_data.description,
-,
                 project_id=item_data.project            )
             database.add(db_element)
             database.flush()  # Get ID without committing
@@ -5807,36 +5805,36 @@ async def get_baseMetric_of_derived(derived_id: int, database: Session = Depends
         "baseMetric": metric_list
     }
 
-@app.post("/derived/{derived_id}/derivedBy/{derived_id}/", response_model=None, tags=["Derived Relationships"])
-async def add_derivedBy_to_derived(derived_id: int, derived_id: int, database: Session = Depends(get_db)):
+@app.post("/derived/{derived_id}/derivedBy/{derived_by_id}/", response_model=None, tags=["Derived Relationships"])
+async def add_derivedBy_to_derived(derived_id: int, derived_by_id: int, database: Session = Depends(get_db)):
     """Add a Derived to this Derived's derivedBy relationship"""
     db_derived = database.query(Derived).filter(Derived.id == derived_id).first()
     if db_derived is None:
         raise HTTPException(status_code=404, detail="Derived not found")
     
-    db_derived = database.query(Derived).filter(Derived.id == derived_id).first()
+    db_derived = database.query(Derived).filter(Derived.id == derived_by_id).first()
     if db_derived is None:
         raise HTTPException(status_code=404, detail="Derived not found")
     
     # Check if relationship already exists
     existing = database.query(derived_metric).filter(
         (derived_metric.c.baseMetric == derived_id) & 
-        (derived_metric.c.derivedBy == derived_id)
+        (derived_metric.c.derivedBy == derived_by_id)
     ).first()
     
     if existing:
         raise HTTPException(status_code=400, detail="Relationship already exists")
     
     # Create the association
-    association = derived_metric.insert().values(baseMetric=derived_id, derivedBy=derived_id)
+    association = derived_metric.insert().values(baseMetric=derived_id, derivedBy=derived_by_id)
     database.execute(association)
     database.commit()
     
     return {"message": "Derived added to derivedBy successfully"}
 
 
-@app.delete("/derived/{derived_id}/derivedBy/{derived_id}/", response_model=None, tags=["Derived Relationships"])
-async def remove_derivedBy_from_derived(derived_id: int, derived_id: int, database: Session = Depends(get_db)):
+@app.delete("/derived/{derived_id}/derivedBy/{derived_by_id}/", response_model=None, tags=["Derived Relationships"])
+async def remove_derivedBy_from_derived(derived_id: int, derived_by_id: int, database: Session = Depends(get_db)):
     """Remove a Derived from this Derived's derivedBy relationship"""
     db_derived = database.query(Derived).filter(Derived.id == derived_id).first()
     if db_derived is None:
@@ -5845,7 +5843,7 @@ async def remove_derivedBy_from_derived(derived_id: int, derived_id: int, databa
     # Check if relationship exists
     existing = database.query(derived_metric).filter(
         (derived_metric.c.baseMetric == derived_id) & 
-        (derived_metric.c.derivedBy == derived_id)
+        (derived_metric.c.derivedBy == derived_by_id)
     ).first()
     
     if not existing:
@@ -5854,7 +5852,7 @@ async def remove_derivedBy_from_derived(derived_id: int, derived_id: int, databa
     # Delete the association
     association = derived_metric.delete().where(
         (derived_metric.c.baseMetric == derived_id) & 
-        (derived_metric.c.derivedBy == derived_id)
+        (derived_metric.c.derivedBy == derived_by_id)
     )
     database.execute(association)
     database.commit()

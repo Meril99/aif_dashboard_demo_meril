@@ -305,7 +305,7 @@ Observation.dataset: Mapped["Dataset"] = relationship("Dataset", back_populates=
 Observation.measures: Mapped[List["Measure"]] = relationship("Measure", back_populates="observation", foreign_keys=[Measure.observation_id])
 
 # Database connection
-DATABASE_URL = "sqlite:///ai_sandbox_PSA_13_Jan_2026.db"  # SQLite connection
+DATABASE_URL = "sqlite:///ai_sandbox_PSA_16_Oct_2025_Cedric_v2.db"  # SQLite connection
 engine = create_engine(DATABASE_URL, echo=True)
 
 # Create tables in the database
