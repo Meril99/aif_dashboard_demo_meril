@@ -2,61 +2,6 @@
   "styles": [
     {
       "selectors": [
-        "#irenj"
-      ],
-      "style": {
-        "--chart-color-palette": "default",
-        "alignItems": "center",
-        "background": "linear-gradient(135deg, #4b3c82 0%, #5a3d91 100%)",
-        "color": "white",
-        "display": "flex",
-        "fontFamily": "Arial, sans-serif",
-        "justifyContent": "space-between",
-        "padding": "15px 30px"
-      }
-    },
-    {
-      "selectors": [
-        "#i77yl"
-      ],
-      "style": {
-        "--chart-color-palette": "default",
-        "fontSize": "24px",
-        "fontWeight": "bold"
-      }
-    },
-    {
-      "selectors": [
-        "#i4vcj"
-      ],
-      "style": {
-        "--chart-color-palette": "default",
-        "display": "flex",
-        "gap": "30px"
-      }
-    },
-    {
-      "selectors": [
-        "#iab76"
-      ],
-      "style": {
-        "--chart-color-palette": "default",
-        "color": "white",
-        "textDecoration": "none"
-      }
-    },
-    {
-      "selectors": [
-        "#ilzt5"
-      ],
-      "style": {
-        "--chart-color-palette": "default",
-        "color": "white",
-        "textDecoration": "none"
-      }
-    },
-    {
-      "selectors": [
         "#iofcf"
       ],
       "style": {
@@ -87,7 +32,84 @@
     },
     {
       "selectors": [
-        "#i1cekk"
+        "#iz4aj"
+      ],
+      "style": {
+        "--chart-color-palette": "default",
+        "alignItems": "center",
+        "background": "linear-gradient(135deg, #4b3c82 0%, #5a3d91 100%)",
+        "color": "white",
+        "display": "flex",
+        "fontFamily": "Arial, sans-serif",
+        "justifyContent": "space-between",
+        "padding": "15px 30px"
+      }
+    },
+    {
+      "selectors": [
+        "#i8eko"
+      ],
+      "style": {
+        "--chart-color-palette": "default",
+        "fontSize": "24px",
+        "fontWeight": "bold"
+      }
+    },
+    {
+      "selectors": [
+        "#iywdg"
+      ],
+      "style": {
+        "--chart-color-palette": "default",
+        "display": "flex",
+        "gap": "30px"
+      }
+    },
+    {
+      "selectors": [
+        "#igwk8"
+      ],
+      "style": {
+        "--chart-color-palette": "default",
+        "color": "white",
+        "textDecoration": "none"
+      }
+    },
+    {
+      "selectors": [
+        "#ibki7"
+      ],
+      "style": {
+        "--chart-color-palette": "default",
+        "color": "white",
+        "textDecoration": "none"
+      }
+    },
+    {
+      "selectors": [
+        "#idd2yg"
+      ],
+      "style": {
+        "--chart-color-palette": "default",
+        "display": "table",
+        "padding": "10px",
+        "width": "100%"
+      }
+    },
+    {
+      "selectors": [
+        "#ixa3hr"
+      ],
+      "style": {
+        "--chart-color-palette": "default",
+        "display": "table-cell",
+        "height": "75px",
+        "width": "33%"
+      }
+    },
+    {
+      "selectors": [
+        "#ikj6y7"
       ],
       "style": {
         "--chart-color-palette": "default",
@@ -98,22 +120,18 @@
     },
     {
       "selectors": [
-        "#iiyfi"
+        "#iznull"
       ],
       "style": {
         "--chart-color-palette": "default",
-        "height": "auto",
-        "margin": "0",
-        "padding": "0",
-        "position": "static",
-        "textAlign": "left",
-        "width": "100%",
-        "zIndex": 0
+        "display": "table-cell",
+        "height": "75px",
+        "width": "33%"
       }
     },
     {
       "selectors": [
-        "#ig71rx"
+        "#icsdfx"
       ],
       "style": {
         "--chart-bar-color": "#3498db",
@@ -124,22 +142,18 @@
     },
     {
       "selectors": [
-        "#container_cell"
+        "#ik39ra"
       ],
       "style": {
         "--chart-color-palette": "default",
-        "height": "auto",
-        "margin": "0",
-        "padding": "0",
-        "position": "static",
-        "textAlign": "left",
-        "width": "100%",
-        "zIndex": 0
+        "display": "table-cell",
+        "height": "75px",
+        "width": "33%"
       }
     },
     {
       "selectors": [
-        "#irekdw"
+        "#iy2apa"
       ],
       "style": {
         "--chart-color-palette": "default",
@@ -150,7 +164,102 @@
     },
     {
       "selectors": [
-        "#ilkggl"
+        "#i75sw8"
+      ],
+      "style": {
+        "--chart-color-palette": "default",
+        "background": "linear-gradient(135deg, rgb(75, 60, 130) 0%, rgb(90, 61, 145) 100%)",
+        "padding": "20px"
+      }
+    },
+    {
+      "selectors": [
+        "#icu0vc"
+      ],
+      "style": {
+        "--chart-color-palette": "default",
+        "margin": "0 auto",
+        "maxWidth": "1400px"
+      }
+    },
+    {
+      "selectors": [
+        "#ij8249"
+      ],
+      "style": {
+        "--chart-color-palette": "default",
+        "color": "white",
+        "fontSize": "32px",
+        "margin": "0 0 10px 0"
+      }
+    },
+    {
+      "selectors": [
+        "#iqomwa"
+      ],
+      "style": {
+        "--chart-color-palette": "default",
+        "color": "rgba(255,255,255,0.8)",
+        "margin": "0"
+      }
+    },
+    {
+      "selectors": [
+        "#im3mgi"
+      ],
+      "style": {
+        "--chart-color-palette": "default",
+        "display": "grid",
+        "gap": "20px",
+        "gridTemplateColumns": "repeat(auto-fit, minmax(250px, 1fr))",
+        "marginBottom": "30px"
+      }
+    },
+    {
+      "selectors": [
+        "#iy7zsy"
+      ],
+      "style": {
+        "--chart-color-palette": "default",
+        "minHeight": "140px",
+        "width": "100%"
+      }
+    },
+    {
+      "selectors": [
+        "#ip3i4k"
+      ],
+      "style": {
+        "--chart-color-palette": "default",
+        "minHeight": "140px",
+        "width": "100%"
+      }
+    },
+    {
+      "selectors": [
+        "#ilcwkv"
+      ],
+      "style": {
+        "--chart-color-palette": "default",
+        "minHeight": "140px",
+        "width": "100%"
+      }
+    },
+    {
+      "selectors": [
+        "#i34fiw"
+      ],
+      "style": {
+        "--chart-color-palette": "default",
+        "display": "grid",
+        "gap": "20px",
+        "gridTemplateColumns": "repeat(auto-fit, minmax(500px, 1fr))",
+        "marginBottom": "20px"
+      }
+    },
+    {
+      "selectors": [
+        "#ioj8df"
       ],
       "style": {
         "--chart-color-palette": "default",
@@ -160,20 +269,19 @@
     },
     {
       "selectors": [
-        "#iv0tsf"
+        "#iru6jv"
       ],
       "style": {
         "--chart-color-palette": "default",
         "background": "linear-gradient(135deg, #4b3c82 0%, #5a3d91 100%)",
         "color": "white",
         "fontFamily": "Arial, sans-serif",
-        "marginTop": "60px",
         "padding": "40px 20px"
       }
     },
     {
       "selectors": [
-        "#ikqajz"
+        "#i1lq9c"
       ],
       "style": {
         "--chart-color-palette": "default",
@@ -186,7 +294,7 @@
     },
     {
       "selectors": [
-        "#ijr0hh"
+        "#i2wbui"
       ],
       "style": {
         "--chart-color-palette": "default",
@@ -196,7 +304,7 @@
     },
     {
       "selectors": [
-        "#icvtnv"
+        "#if21il"
       ],
       "style": {
         "--chart-color-palette": "default",
@@ -207,7 +315,7 @@
     },
     {
       "selectors": [
-        "#iyeciq"
+        "#ipmphi"
       ],
       "style": {
         "--chart-color-palette": "default",
@@ -216,7 +324,7 @@
     },
     {
       "selectors": [
-        "#id2pjg"
+        "#i6pcpz"
       ],
       "style": {
         "--chart-color-palette": "default",
@@ -226,7 +334,7 @@
     },
     {
       "selectors": [
-        "#ivv8oa"
+        "#iw5bdf"
       ],
       "style": {
         "--chart-color-palette": "default",
@@ -235,7 +343,7 @@
     },
     {
       "selectors": [
-        "#icjzp3"
+        "#itwa7j"
       ],
       "style": {
         "--chart-color-palette": "default",
@@ -1261,7 +1369,7 @@
     },
     {
       "selectors": [
-        "#if1fqg"
+        "#i6xtqz"
       ],
       "style": {
         "marginTop": "0"
@@ -1269,7 +1377,7 @@
     },
     {
       "selectors": [
-        "#iq3sz9"
+        "#imf0qz"
       ],
       "style": {
         "marginTop": "0"
@@ -1277,10 +1385,18 @@
     },
     {
       "selectors": [
-        "#inqfyo"
+        "#ij7xsi"
       ],
       "style": {
         "marginTop": "0"
+      }
+    },
+    {
+      "selectors": [
+        "#iip80d"
+      ],
+      "style": {
+        "marginBottom": "30px"
       }
     }
   ]

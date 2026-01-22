@@ -4,70 +4,6 @@
       "components": [
         {
           "attributes": {
-            "id": "irenj"
-          },
-          "children": [
-            {
-              "attributes": {
-                "id": "i77yl"
-              },
-              "content": "AI Factories Test Dashboard",
-              "description": "Text element",
-              "display_order": 0,
-              "id": "i77yl",
-              "name": "AI Factories Test Dashboard",
-              "type": "text"
-            },
-            {
-              "attributes": {
-                "id": "i4vcj"
-              },
-              "children": [
-                {
-                  "attributes": {
-                    "href": "/",
-                    "id": "iab76"
-                  },
-                  "description": "Link element",
-                  "display_order": 0,
-                  "id": "iab76",
-                  "label": "Home",
-                  "name": "iab76",
-                  "tag": "a",
-                  "type": "link",
-                  "url": "/"
-                },
-                {
-                  "attributes": {
-                    "href": "/about",
-                    "id": "ilzt5"
-                  },
-                  "description": "Link element",
-                  "display_order": 1,
-                  "id": "ilzt5",
-                  "label": "About",
-                  "name": "ilzt5",
-                  "tag": "a",
-                  "type": "link",
-                  "url": "/about"
-                }
-              ],
-              "description": " component",
-              "display_order": 1,
-              "id": "i4vcj",
-              "name": "i4vcj",
-              "type": "container"
-            }
-          ],
-          "description": "nav container",
-          "display_order": 0,
-          "id": "irenj",
-          "name": "irenj",
-          "tag": "nav",
-          "type": "container"
-        },
-        {
-          "attributes": {
             "id": "iofcf"
           },
           "children": [
@@ -78,47 +14,674 @@
               "children": [
                 {
                   "attributes": {
-                    "animate": true,
-                    "chart-color": "#4CAF50",
-                    "chart-title": "Line Chart",
-                    "curve-type": "monotone",
-                    "data-field": "value",
-                    "data-source": "a2546a91-1913-4cac-86ac-283c39218a3a",
-                    "id": "i1cekk",
-                    "label-field": "metric_id",
-                    "line-width": "2",
-                    "series": "[{\"name\":\"Series 1\",\"color\":\"#4CAF50\",\"data\":[{\"name\":\"Category A\",\"value\":40},{\"name\":\"Category B\",\"value\":65},{\"name\":\"Category C\",\"value\":85},{\"name\":\"Category D\",\"value\":55},{\"name\":\"Category E\",\"value\":75}],\"dataSource\":\"a2546a91-1913-4cac-86ac-283c39218a3a\",\"labelField\":\"d6a622b9-2432-4411-a3f2-5815dff2085e\",\"dataField\":\"c1748cab-b490-4f3a-831e-0568ca940062\",\"data-source\":\"a2546a91-1913-4cac-86ac-283c39218a3a\",\"label-field\":\"d6a622b9-2432-4411-a3f2-5815dff2085e\",\"data-field\":\"c1748cab-b490-4f3a-831e-0568ca940062\"}]",
-                    "show-grid": true,
-                    "show-legend": true,
-                    "show-tooltip": true
+                    "id": "iz4aj"
+                  },
+                  "children": [
+                    {
+                      "attributes": {
+                        "id": "i8eko"
+                      },
+                      "content": "BESSER",
+                      "description": "Text element",
+                      "display_order": 0,
+                      "id": "i8eko",
+                      "name": "BESSER",
+                      "type": "text"
+                    },
+                    {
+                      "attributes": {
+                        "id": "iywdg"
+                      },
+                      "children": [
+                        {
+                          "attributes": {
+                            "href": "/",
+                            "id": "igwk8"
+                          },
+                          "description": "Link element",
+                          "display_order": 0,
+                          "id": "igwk8",
+                          "label": "Home",
+                          "name": "igwk8",
+                          "tag": "a",
+                          "type": "link",
+                          "url": "/"
+                        },
+                        {
+                          "attributes": {
+                            "href": "/about",
+                            "id": "ibki7"
+                          },
+                          "description": "Link element",
+                          "display_order": 1,
+                          "id": "ibki7",
+                          "label": "About",
+                          "name": "ibki7",
+                          "tag": "a",
+                          "type": "link",
+                          "url": "/about"
+                        }
+                      ],
+                      "description": " component",
+                      "display_order": 1,
+                      "id": "iywdg",
+                      "name": "iywdg",
+                      "type": "container"
+                    }
+                  ],
+                  "description": "nav container",
+                  "display_order": 0,
+                  "id": "iz4aj",
+                  "name": "iz4aj",
+                  "tag": "nav",
+                  "type": "container"
+                },
+                {
+                  "attributes": {
+                    "id": "idd2yg"
+                  },
+                  "children": [
+                    {
+                      "attributes": {
+                        "id": "ixa3hr"
+                      },
+                      "children": [
+                        {
+                          "attributes": {
+                            "animate": "true",
+                            "chart-color": "#4CAF50",
+                            "chart-title": "Line Chart",
+                            "curve-type": "linear",
+                            "id": "ikj6y7",
+                            "line-width": "2",
+                            "label-field": "pid",
+                            "data-field": "value",
+                            "series": "[{\"name\":\"A1 Total\",\"color\":\"#FF6B6B\"}, {\"name\":\"A2 Total\",\"color\":\"#0088FE\"}]",
+                            "show-grid": "true",
+                            "show-legend": "true",
+                            "show-tooltip": "true",
+                            "xAxisLabelAngle": -90
+                          },
+                          "data_binding": {
+                            "endpoint": "/chart/model-metric-values?metric_ids=5,10",
+                            "entity": "Measure"
+                          },
+                          "chart": {
+                            "animate": true,
+                            "curveType": "monotone",
+                            "dotSize": 5,
+                            "gridColor": "#e0e0e0",
+                            "legendPosition": "top",
+                            "lineWidth": 2,
+                            "showGrid": true,
+                            "showLegend": true,
+                            "showTooltip": true,
+                            "xAxisLabelAngle": -90
+                          },
+                          "class_list": [
+                            "line-chart-component"
+                          ],
+                          "color": "#FF6B6B",
+                          "display_order": 0,
+                          "id": "ikj6y7",
+                          "name": "Line Chart",
+                          "title": "Line Chart",
+                          "type": "line-chart"
+                        }
+                      ],
+                      "class_list": [
+                        "gjs-cell"
+                      ],
+                      "description": " component",
+                      "display_order": 0,
+                      "id": "ixa3hr",
+                      "name": "ixa3hr",
+                      "type": "container"
+                    },
+                    {
+                      "attributes": {
+                        "id": "iznull"
+                      },
+                      "children": [
+                        {
+                          "attributes": {
+                            "bar-width": "30",
+                            "chart-color": "#3498db",
+                            "chart-title": "Bar Chart",
+                            "id": "icsdfx",
+                            "orientation": "vertical",
+                            "series": "[{\"name\":\"A1 Total\",\"color\":\"#FF6B6B\"}, {\"name\":\"A2 Total\",\"color\":\"#4ECDC4\"}]",
+                            "show-grid": "true",
+                            "show-legend": "true",
+                            "stacked": "false",
+                            "xAxisLabelAngle": -90
+                          },
+                          "data_binding": {
+                            "endpoint": "/chart/model-metric-values?metric_ids=5,10",
+                            "entity": "Measure"
+                          },
+                          "chart": {
+                            "animate": true,
+                            "barGap": 4,
+                            "barWidth": 30,
+                            "gridColor": "#e0e0e0",
+                            "legendPosition": "top",
+                            "orientation": "vertical",
+                            "showGrid": true,
+                            "showLegend": true,
+                            "showTooltip": true,
+                            "stacked": false
+                          },
+                          "class_list": [
+                            "bar-chart-component"
+                          ],
+                          "color": "#3498db",
+                          "display_order": 0,
+                          "id": "icsdfx",
+                          "name": "Bar Chart",
+                          "title": "Bar Chart",
+                          "type": "bar-chart"
+                        }
+                      ],
+                      "class_list": [
+                        "gjs-cell"
+                      ],
+                      "description": " component",
+                      "display_order": 1,
+                      "id": "iznull",
+                      "name": "iznull",
+                      "type": "container"
+                    },
+                    {
+                      "attributes": {
+                        "id": "ik39ra"
+                      },
+                      "children": [
+                        {
+                          "attributes": {
+                            "chart-color": "#8884d8",
+                            "chart-title": "Radar Chart",
+                            "id": "iy2apa",
+                            "label-field": "pid",
+                            "data-field": "value",
+                            "radar": "[{\"max\": \"100\", \"metrics\": [\"A1 Total\", \"A2 Total\", \"B1 Total\", \"B2 Total\", \"C1 Total\", \"C2 Total\"]}]",
+                            "show-grid": "true",
+                            "show-radius-axis": "true",
+                            "show-tooltip": "true"
+                          },
+                          "data_binding": {
+                            "endpoint": "/chart/model-metric-values?metric_ids=5,10,15,20,25,30",
+                            "entity": "Measure"
+                          },
+                          "chart": {
+                            "dotSize": 3,
+                            "gridType": "polygon",
+                            "legendPosition": "top",
+                            "showGrid": true,
+                            "showLegend": true,
+                            "showRadiusAxis": true,
+                            "showTooltip": true,
+                            "strokeWidth": 2
+                          },
+                          "class_list": [
+                            "radar-chart-component"
+                          ],
+                          "color": "#8884d8",
+                          "display_order": 0,
+                          "id": "iy2apa",
+                          "name": "Radar Chart",
+                          "title": "Radar Chart",
+                          "type": "radar-chart"
+                        }
+                      ],
+                      "class_list": [
+                        "gjs-cell"
+                      ],
+                      "description": " component",
+                      "display_order": 2,
+                      "id": "ik39ra",
+                      "name": "ik39ra",
+                      "type": "container"
+                    }
+                  ],
+                  "class_list": [
+                    "gjs-row"
+                  ],
+                  "description": " component",
+                  "display_order": 1,
+                  "id": "idd2yg",
+                  "name": "idd2yg",
+                  "type": "container"
+                },
+                {
+                  "attributes": {
+                    "id": "i75sw8"
+                  },
+                  "children": [
+                    {
+                      "attributes": {
+                        "id": "icu0vc"
+                      },
+                      "children": [
+                        {
+                          "attributes": {
+                            "id": "iip80d"
+                          },
+                          "children": [
+                            {
+                              "attributes": {
+                                "id": "ij8249"
+                              },
+                              "content": "Analytics Dashboard",
+                              "description": "Text element",
+                              "display_order": 0,
+                              "id": "ij8249",
+                              "name": "Analytics Dashboard",
+                              "tag": "h1",
+                              "type": "text"
+                            },
+                            {
+                              "attributes": {
+                                "id": "iqomwa"
+                              },
+                              "content": "Key insights and metrics",
+                              "description": "Text element",
+                              "display_order": 1,
+                              "id": "iqomwa",
+                              "name": "Key insights and metrics",
+                              "tag": "p",
+                              "type": "text"
+                            }
+                          ],
+                          "description": " component",
+                          "display_order": 1,
+                          "id": "iip80d",
+                          "name": "iip80d",
+                          "type": "container"
+                        },
+                        {
+                          "attributes": {
+                            "id": "im3mgi"
+                          },
+                          "children": [
+                            {
+                              "attributes": {
+                                "data-field": "d9450a4f-5890-4e67-badc-d6299cea2351",
+                                "data-source": "b910ce24-f2bd-40de-b141-ce2956087223",
+                                "format": "number",
+                                "id": "iy7zsy",
+                                "metric-title": "Model Familys tested",
+                                "negative-color": "#e74c3c",
+                                "positive-color": "#27ae60",
+                                "show-trend": true,
+                                "value-color": "#2c3e50",
+                                "value-size": 32
+                              },
+                              "class_list": [
+                                "metric-card-component",
+                                "has-data-binding"
+                              ],
+                              "color": "#2c3e50",
+                              "data_binding": {
+                                "data_field": "pid",
+                                "endpoint": "/model/",
+                                "entity": "Model"
+                              },
+                              "display_order": 0,
+                              "id": "iy7zsy",
+                              "metric": {
+                                "format": "number",
+                                "metricTitle": "Model Familys tested",
+                                "negativeColor": "#e74c3c",
+                                "positiveColor": "#27ae60",
+                                "showTrend": true,
+                                "trend": 12,
+                                "value": 0,
+                                "valueColor": "#2c3e50",
+                                "valueSize": 32
+                              },
+                              "name": "iy7zsy",
+                              "title": "Model Familys tested",
+                              "type": "metric-card"
+                            },
+                            {
+                              "attributes": {
+                                "data-field": "source",
+                                "data-source": "model",
+                                "format": "number",
+                                "id": "ip3i4k",
+                                "metric-title": "Total Models evaluated",
+                                "negative-color": "#e74c3c",
+                                "positive-color": "#27ae60",
+                                "show-trend": true,
+                                "value-color": "#2c3e50",
+                                "value-size": 32
+                              },
+                              "class_list": [
+                                "metric-card-component",
+                                "has-data-binding"
+                              ],
+                              "color": "#2c3e50",
+                              "data_binding": {
+                                "source": "source",
+                                "endpoint": "/model/",
+                                "entity": "Model"
+                              },
+                              "display_order": 1,
+                              "id": "ip3i4k",
+                              "metric": {
+                                "format": "number",
+                                "metricTitle": "Total Models evaluated",
+                                "negativeColor": "#e74c3c",
+                                "positiveColor": "#27ae60",
+                                "showTrend": true,
+                                "trend": 12,
+                                "value": 0,
+                                "valueColor": "#2c3e50",
+                                "valueSize": 32
+                              },
+                              "name": "ip3i4k",
+                              "title": "Total Models evaluated",
+                              "type": "metric-card"
+                            },
+                            {
+                              "attributes": {
+                                "data-field": "d6a622b9-2432-4411-a3f2-5815dff2085e",
+                                "data-source": "a2546a91-1913-4cac-86ac-283c39218a3a",
+                                "format": "number",
+                                "id": "ilcwkv",
+                                "metric-title": "No. of Metrics",
+                                "negative-color": "#e74c3c",
+                                "positive-color": "#27ae60",
+                                "show-trend": true,
+                                "value-color": "#2c3e50",
+                                "value-size": 32
+                              },
+                              "class_list": [
+                                "metric-card-component",
+                                "has-data-binding"
+                              ],
+                              "color": "#2c3e50",
+                              "data_binding": {
+                                "endpoint": "/measure/",
+                                "entity": "Measure"
+                              },
+                              "display_order": 2,
+                              "id": "ilcwkv",
+                              "metric": {
+                                "format": "number",
+                                "metricTitle": "No. of Metrics",
+                                "negativeColor": "#e74c3c",
+                                "positiveColor": "#27ae60",
+                                "showTrend": true,
+                                "trend": 12,
+                                "value": 0,
+                                "valueColor": "#2c3e50",
+                                "valueSize": 32
+                              },
+                              "name": "ilcwkv",
+                              "title": "No. of Metrics",
+                              "type": "metric-card"
+                            }
+                          ],
+                          "class_list": [
+                            "kpi-row"
+                          ],
+                          "description": " component",
+                          "display_order": 3,
+                          "id": "im3mgi",
+                          "name": "im3mgi",
+                          "type": "container"
+                        },
+                        {
+                          "attributes": {
+                            "id": "i34fiw"
+                          },
+                          "class_list": [
+                            "charts-row"
+                          ],
+                          "description": " component",
+                          "display_order": 5,
+                          "id": "i34fiw",
+                          "name": "i34fiw",
+                          "type": "component"
+                        }
+                      ],
+                      "description": " component",
+                      "display_order": 0,
+                      "id": "icu0vc",
+                      "name": "icu0vc",
+                      "type": "container"
+                    }
+                  ],
+                  "class_list": [
+                    "dashboard-container"
+                  ],
+                  "description": " component",
+                  "display_order": 2,
+                  "id": "i75sw8",
+                  "name": "i75sw8",
+                  "type": "container"
+                },
+                {
+                  "attributes": {
+                    "action-buttons": true,
+                    "chart-color": "#2c3e50",
+                    "chart-title": "Comments",
+                    "data-source": "023aecf5-ba9a-4872-a2e9-4b1f2872eb1b",
+                    "id": "ioj8df",
+                    "rows-per-page": 5,
+                    "show-header": true,
+                    "show-pagination": true,
+                    "striped-rows": false
                   },
                   "chart": {
-                    "animate": true,
-                    "curveType": "monotone",
-                    "dotSize": 5,
-                    "gridColor": "#e0e0e0",
-                    "legendPosition": "top",
-                    "lineWidth": 2,
-                    "showGrid": true,
-                    "showLegend": true,
-                    "showTooltip": true
+                    "actionButtons": true,
+                    "columns": [
+                      {
+                        "column_type": "field",
+                        "field": "Name",
+                        "label": "Name",
+                        "required": true,
+                        "type": "str"
+                      },
+                      {
+                        "column_type": "field",
+                        "field": "Comments",
+                        "label": "Comments",
+                        "required": true,
+                        "type": "str"
+                      },
+                      {
+                        "column_type": "field",
+                        "field": "TimeStamp",
+                        "label": "TimeStamp",
+                        "required": true,
+                        "type": "datetime"
+                      }
+                    ],
+                    "rowsPerPage": 5,
+                    "showHeader": true,
+                    "showPagination": true,
+                    "stripedRows": false
                   },
                   "class_list": [
-                    "line-chart-component",
+                    "table-component",
                     "has-data-binding"
                   ],
-                  "color": "#4CAF50",
+                  "color": "#2c3e50",
                   "data_binding": {
-                    "endpoint": "/measure/",
-                    "filters": {
-                      "metric_id": 1
-                    }
+                    "endpoint": "/comments/",
+                    "entity": "Comments"
                   },
-                  "display_order": 0,
-                  "id": "i1cekk",
-                  "name": "Line Chart",
-                  "title": "Line Chart",
-                  "type": "line-chart"
+                  "display_order": 3,
+                  "id": "ioj8df",
+                  "name": "Comments",
+                  "title": "Comments",
+                  "type": "table"
+                },
+                {
+                  "attributes": {
+                    "id": "iru6jv"
+                  },
+                  "children": [
+                    {
+                      "attributes": {
+                        "id": "i1lq9c"
+                      },
+                      "children": [
+                        {
+                          "children": [
+                            {
+                              "attributes": {
+                                "id": "i6xtqz"
+                              },
+                              "content": "About BESSER",
+                              "description": "Text element",
+                              "display_order": 0,
+                              "id": "i6xtqz",
+                              "name": "About BESSER",
+                              "tag": "h4",
+                              "type": "text"
+                            },
+                            {
+                              "attributes": {
+                                "id": "i2wbui"
+                              },
+                              "content": "BESSER is a low-code platform for building smarter software faster. Empower your development with our dashboard generator and modeling tools.",
+                              "description": "Text element",
+                              "display_order": 1,
+                              "id": "i2wbui",
+                              "name": "BESSER is a low-code platform for building smarter software faster. Empower your development with our dashboard generator and modeling tools.",
+                              "tag": "p",
+                              "type": "text"
+                            }
+                          ],
+                          "description": " component",
+                          "display_order": 0,
+                          "id": "Component",
+                          "name": "Component",
+                          "type": "container"
+                        },
+                        {
+                          "children": [
+                            {
+                              "attributes": {
+                                "id": "imf0qz"
+                              },
+                              "content": "Quick Links",
+                              "description": "Text element",
+                              "display_order": 0,
+                              "id": "imf0qz",
+                              "name": "Quick Links",
+                              "tag": "h4",
+                              "type": "text"
+                            },
+                            {
+                              "attributes": {
+                                "id": "if21il"
+                              },
+                              "children": [
+                                {
+                                  "attributes": {
+                                    "id": "ipmphi"
+                                  },
+                                  "children": [
+                                    {
+                                      "attributes": {
+                                        "href": "/about",
+                                        "id": "i6pcpz"
+                                      },
+                                      "description": "Link element",
+                                      "display_order": 0,
+                                      "id": "i6pcpz",
+                                      "label": "About",
+                                      "name": "i6pcpz",
+                                      "tag": "a",
+                                      "type": "link",
+                                      "url": "/about"
+                                    }
+                                  ],
+                                  "description": "li container",
+                                  "display_order": 0,
+                                  "id": "ipmphi",
+                                  "name": "ipmphi",
+                                  "tag": "li",
+                                  "type": "container"
+                                }
+                              ],
+                              "description": "ul container",
+                              "display_order": 1,
+                              "id": "if21il",
+                              "name": "if21il",
+                              "tag": "ul",
+                              "type": "container"
+                            }
+                          ],
+                          "description": " component",
+                          "display_order": 1,
+                          "id": "Component_2",
+                          "name": "Component 2",
+                          "type": "container"
+                        },
+                        {
+                          "children": [
+                            {
+                              "attributes": {
+                                "id": "ij7xsi"
+                              },
+                              "content": "Contact",
+                              "description": "Text element",
+                              "display_order": 0,
+                              "id": "ij7xsi",
+                              "name": "Contact",
+                              "tag": "h4",
+                              "type": "text"
+                            },
+                            {
+                              "attributes": {
+                                "id": "iw5bdf"
+                              },
+                              "content": "Email: info@besser-pearl.org\nPhone: (123) 456-7890",
+                              "description": "Text element",
+                              "display_order": 1,
+                              "id": "iw5bdf",
+                              "name": "Email: info@besser-pearl.org\nPhone: (123) 456-7890",
+                              "tag": "p",
+                              "type": "text"
+                            }
+                          ],
+                          "description": " component",
+                          "display_order": 2,
+                          "id": "Component_3",
+                          "name": "Component 3",
+                          "type": "container"
+                        }
+                      ],
+                      "description": " component",
+                      "display_order": 0,
+                      "id": "i1lq9c",
+                      "name": "i1lq9c",
+                      "type": "container"
+                    },
+                    {
+                      "attributes": {
+                        "id": "itwa7j"
+                      },
+                      "content": "© 2025 BESSER. All rights reserved.",
+                      "description": "Text element",
+                      "display_order": 1,
+                      "id": "itwa7j",
+                      "name": "© 2025 BESSER. All rights reserved.",
+                      "type": "text"
+                    }
+                  ],
+                  "description": "footer container",
+                  "display_order": 4,
+                  "id": "iru6jv",
+                  "name": "iru6jv",
+                  "tag": "footer",
+                  "type": "container"
                 }
               ],
               "class_list": [
@@ -129,380 +692,15 @@
               "id": "if369",
               "name": "if369",
               "type": "container"
-            },
-            {
-              "attributes": {
-                "id": "iiyfi"
-              },
-              "children": [
-                {
-                  "attributes": {
-                    "bar-width": 30,
-                    "chart-color": "#3498db",
-                    "chart-title": "Bar Chart Title",
-                    "data-field": "value",
-                    "data-source": "a2546a91-1913-4cac-86ac-283c39218a3a",
-                    "id": "ig71rx",
-                    "label-field": "metric_id",
-                    "orientation": "vertical",
-                    "series": "[{\"name\":\"Series 1\",\"color\":\"#3498db\",\"data\":[{\"name\":\"Category A\",\"value\":40},{\"name\":\"Category B\",\"value\":65},{\"name\":\"Category C\",\"value\":85},{\"name\":\"Category D\",\"value\":55},{\"name\":\"Category E\",\"value\":75}],\"dataSource\":\"a2546a91-1913-4cac-86ac-283c39218a3a\",\"labelField\":\"d6a622b9-2432-4411-a3f2-5815dff2085e\",\"dataField\":\"d6a622b9-2432-4411-a3f2-5815dff2085e\",\"data-source\":\"a2546a91-1913-4cac-86ac-283c39218a3a\",\"label-field\":\"d6a622b9-2432-4411-a3f2-5815dff2085e\",\"data-field\":\"c1748cab-b490-4f3a-831e-0568ca940062\"}]",
-                    "show-grid": true,
-                    "show-legend": true,
-                    "stacked": false
-                  },
-                  "chart": {
-                    "animate": true,
-                    "barGap": 4,
-                    "barWidth": 30,
-                    "gridColor": "#e0e0e0",
-                    "legendPosition": "top",
-                    "orientation": "vertical",
-                    "showGrid": true,
-                    "showLegend": true,
-                    "showTooltip": true,
-                    "stacked": false
-                  },
-                  "class_list": [
-                    "bar-chart-component",
-                    "has-data-binding"
-                  ],
-                  "color": "#3498db",
-                  "data_binding": {
-                    "endpoint": "/measure/",
-                    "filters": {
-                      "metric_id": 1
-                    }
-                  },
-                  "display_order": 0,
-                  "id": "ig71rx",
-                  "name": "Bar Chart Title",
-                  "title": "Bar Chart Title",
-                  "type": "bar-chart"
-                }
-              ],
-              "class_list": [
-                "gjs-cell"
-              ],
-              "description": " container",
-              "display_order": 1,
-              "id": "iiyfi",
-              "name": "iiyfi",
-              "type": "container"
-            },
-            {
-              "children": [
-                {
-                  "attributes": {
-                    "chart-color": "#8884d8",
-                    "chart-title": "Radar Chart",
-                    "data-field": "value",
-                    "data-source": "a2546a91-1913-4cac-86ac-283c39218a3a",
-                    "id": "irekdw",
-                    "label-field": "metric_id",
-                    "series": "[{\"name\":\"Series 1\",\"color\":\"#8884d8\",\"data\":[{\"subject\":\"Category A\",\"value\":85,\"fullMark\":100},{\"subject\":\"Category B\",\"value\":75,\"fullMark\":100},{\"subject\":\"Category C\",\"value\":90,\"fullMark\":100},{\"subject\":\"Category D\",\"value\":80,\"fullMark\":100},{\"subject\":\"Category E\",\"value\":70,\"fullMark\":100}],\"dataSource\":\"a2546a91-1913-4cac-86ac-283c39218a3a\",\"labelField\":\"d6a622b9-2432-4411-a3f2-5815dff2085e\",\"dataField\":\"d6a622b9-2432-4411-a3f2-5815dff2085e\",\"data-source\":\"a2546a91-1913-4cac-86ac-283c39218a3a\",\"label-field\":\"d6a622b9-2432-4411-a3f2-5815dff2085e\",\"data-field\":\"c1748cab-b490-4f3a-831e-0568ca940062\"}]",
-                    "show-grid": true,
-                    "show-radius-axis": true,
-                    "show-tooltip": true
-                  },
-                  "chart": {
-                    "dotSize": 3,
-                    "gridType": "polygon",
-                    "legendPosition": "top",
-                    "showGrid": true,
-                    "showLegend": true,
-                    "showRadiusAxis": true,
-                    "showTooltip": true,
-                    "strokeWidth": 2
-                  },
-                  "class_list": [
-                    "radar-chart-component",
-                    "has-data-binding"
-                  ],
-                  "color": "#8884d8",
-                  "data_binding": {
-                    "endpoint": "/measure/",
-                    "filters": {
-                      "metric_id": 1
-                    }
-                  },
-                  "display_order": 0,
-                  "id": "irekdw",
-                  "name": "Radar Chart",
-                  "title": "Radar Chart",
-                  "type": "radar-chart"
-                }
-              ],
-              "class_list": [
-                "gjs-cell"
-              ],
-              "description": " container",
-              "display_order": 2,
-              "id": "container_cell",
-              "name": "Cell",
-              "type": "container"
             }
           ],
           "class_list": [
             "gjs-row"
           ],
           "description": " container",
-          "display_order": 1,
+          "display_order": 0,
           "id": "iofcf",
           "name": "iofcf",
-          "type": "container"
-        },
-        {
-          "attributes": {
-            "action-buttons": true,
-            "chart-color": "#2c3e50",
-            "chart-title": "Table Displaying Measure",
-            "data-source": "a2546a91-1913-4cac-86ac-283c39218a3a",
-            "id": "ilkggl",
-            "rows-per-page": 5,
-            "show-header": true,
-            "show-pagination": true,
-            "striped-rows": false
-          },
-          "chart": {
-            "actionButtons": true,
-            "columns": [
-              {
-                "column_type": "field",
-                "field": "value",
-                "label": "Value",
-                "required": true,
-                "type": "float"
-              },
-              {
-                "column_type": "field",
-                "field": "error",
-                "label": "Error",
-                "required": true,
-                "type": "str"
-              },
-              {
-                "column_type": "field",
-                "field": "uncertainty",
-                "label": "Uncertainty",
-                "required": true,
-                "type": "float"
-              },
-              {
-                "column_type": "field",
-                "field": "unit",
-                "label": "Unit",
-                "required": true,
-                "type": "str"
-              },
-              {
-                "column_type": "lookup",
-                "entity": "Element",
-                "field": "name",
-                "label": "Measurand",
-                "path": "measurand",
-                "required": true,
-                "type": "str"
-              },
-              {
-                "column_type": "lookup",
-                "entity": "Metric",
-                "field": "name",
-                "label": "Metric",
-                "path": "metric",
-                "required": true,
-                "type": "str"
-              },
-              {
-                "column_type": "lookup",
-                "entity": "Observation",
-                "field": "observer",
-                "label": "Observation",
-                "path": "observation",
-                "required": true,
-                "type": "str"
-              }
-            ],
-            "rowsPerPage": 5,
-            "showHeader": true,
-            "showPagination": true,
-            "stripedRows": false
-          },
-          "class_list": [
-            "table-component",
-            "has-data-binding"
-          ],
-          "color": "#2c3e50",
-          "data_binding": {
-            "endpoint": "/measure/",
-            "entity": "Measure"
-          },
-          "display_order": 2,
-          "id": "ilkggl",
-          "name": "Table Displaying Measure",
-          "title": "Table Displaying Measure",
-          "type": "table"
-        },
-        {
-          "attributes": {
-            "id": "iv0tsf"
-          },
-          "children": [
-            {
-              "attributes": {
-                "id": "ikqajz"
-              },
-              "children": [
-                {
-                  "children": [
-                    {
-                      "attributes": {
-                        "id": "if1fqg"
-                      },
-                      "content": "About BESSER",
-                      "description": "Text element",
-                      "display_order": 0,
-                      "id": "if1fqg",
-                      "name": "About BESSER",
-                      "tag": "h4",
-                      "type": "text"
-                    },
-                    {
-                      "attributes": {
-                        "id": "ijr0hh"
-                      },
-                      "content": "BESSER is a low-code platform for building smarter software faster. Empower your development with our dashboard generator and modeling tools.",
-                      "description": "Text element",
-                      "display_order": 1,
-                      "id": "ijr0hh",
-                      "name": "BESSER is a low-code platform for building smarter software faster. Empower your development with our dashboard generator and modeling tools.",
-                      "tag": "p",
-                      "type": "text"
-                    }
-                  ],
-                  "description": " component",
-                  "display_order": 0,
-                  "id": "Component",
-                  "name": "Component",
-                  "type": "container"
-                },
-                {
-                  "children": [
-                    {
-                      "attributes": {
-                        "id": "iq3sz9"
-                      },
-                      "content": "Quick Links",
-                      "description": "Text element",
-                      "display_order": 0,
-                      "id": "iq3sz9",
-                      "name": "Quick Links",
-                      "tag": "h4",
-                      "type": "text"
-                    },
-                    {
-                      "attributes": {
-                        "id": "icvtnv"
-                      },
-                      "children": [
-                        {
-                          "attributes": {
-                            "id": "iyeciq"
-                          },
-                          "children": [
-                            {
-                              "attributes": {
-                                "href": "/about",
-                                "id": "id2pjg"
-                              },
-                              "description": "Link element",
-                              "display_order": 0,
-                              "id": "id2pjg",
-                              "label": "About",
-                              "name": "id2pjg",
-                              "tag": "a",
-                              "type": "link",
-                              "url": "/about"
-                            }
-                          ],
-                          "description": "li container",
-                          "display_order": 0,
-                          "id": "iyeciq",
-                          "name": "iyeciq",
-                          "tag": "li",
-                          "type": "container"
-                        }
-                      ],
-                      "description": "ul container",
-                      "display_order": 1,
-                      "id": "icvtnv",
-                      "name": "icvtnv",
-                      "tag": "ul",
-                      "type": "container"
-                    }
-                  ],
-                  "description": " component",
-                  "display_order": 1,
-                  "id": "Component_2",
-                  "name": "Component 2",
-                  "type": "container"
-                },
-                {
-                  "children": [
-                    {
-                      "attributes": {
-                        "id": "inqfyo"
-                      },
-                      "content": "Contact",
-                      "description": "Text element",
-                      "display_order": 0,
-                      "id": "inqfyo",
-                      "name": "Contact",
-                      "tag": "h4",
-                      "type": "text"
-                    },
-                    {
-                      "attributes": {
-                        "id": "ivv8oa"
-                      },
-                      "content": "Email: info@besser-pearl.org\nPhone: (123) 456-7890",
-                      "description": "Text element",
-                      "display_order": 1,
-                      "id": "ivv8oa",
-                      "name": "Email: info@besser-pearl.org\nPhone: (123) 456-7890",
-                      "tag": "p",
-                      "type": "text"
-                    }
-                  ],
-                  "description": " component",
-                  "display_order": 2,
-                  "id": "Component_3",
-                  "name": "Component 3",
-                  "type": "container"
-                }
-              ],
-              "description": " component",
-              "display_order": 0,
-              "id": "ikqajz",
-              "name": "ikqajz",
-              "type": "container"
-            },
-            {
-              "attributes": {
-                "id": "icjzp3"
-              },
-              "content": "© 2025 BESSER. All rights reserved.",
-              "description": "Text element",
-              "display_order": 1,
-              "id": "icjzp3",
-              "name": "© 2025 BESSER. All rights reserved.",
-              "type": "text"
-            }
-          ],
-          "description": "footer container",
-          "display_order": 3,
-          "id": "iv0tsf",
-          "name": "iv0tsf",
-          "tag": "footer",
           "type": "container"
         }
       ],

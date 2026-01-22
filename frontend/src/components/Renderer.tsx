@@ -5,6 +5,7 @@ import { applyStyle, StyleData } from "../utils/applyStyle";
 import { BarChartComponent } from "./charts/BarChartComponent";
 import { LineChartComponent } from "./charts/LineChartComponent";
 import { RadarChartComponent } from "./charts/RadarChartComponent";
+import { MetricCardComponent } from "./charts/MetricCardComponent";
 import { TableComponent } from "./table/TableComponent";
 import { AgentComponent } from "./AgentComponent";
 import { MethodButton } from "./MethodButton";
@@ -44,25 +45,16 @@ export const Renderer: React.FC<RendererProps> = ({ component, styles }) => {
         // Always use backend base URL for relative endpoints
         const backendBase = "http://localhost:8000";
         
-        // Build URL with filter parameters if provided
-        let url = endpoint.startsWith("/") 
-          ? backendBase + endpoint
-          : endpoint;
+        // Check if table has lookup columns - if so, request detailed data with joins
+        const hasLookupColumns = component.chart?.columns?.some(
+          (col: any) => typeof col === 'object' && col.column_type === 'lookup'
+        );
         
-        // Add filter parameters from data_binding.filters
-        const filters = component.data_binding?.filters;
-        if (filters && typeof filters === 'object') {
-          const queryParams = new URLSearchParams();
-          Object.entries(filters).forEach(([key, value]) => {
-            if (value !== null && value !== undefined) {
-              queryParams.append(key, String(value));
-            }
-          });
-          const queryString = queryParams.toString();
-          if (queryString) {
-            url += (url.includes('?') ? '&' : '?') + queryString;
-          }
-        }
+        // Add detailed=true query param if there are lookup columns
+        const urlParams = hasLookupColumns ? '?detailed=true' : '';
+        const url = endpoint.startsWith("/") 
+          ? backendBase + endpoint + urlParams
+          : endpoint + urlParams;
         
         axios.get(url)
           .then((res) => {
@@ -100,6 +92,56 @@ export const Renderer: React.FC<RendererProps> = ({ component, styles }) => {
       }
     }
   }, [component.type, component.data_binding?.endpoint]);
+
+  // PSA: Making sure we are picking up the correct data binding
+  useEffect(() => {
+  if (component.type === "line-chart") {
+    const endpoint = component.data_binding?.endpoint;
+    if (endpoint) {
+      setLoading(true);
+      setError(null);
+      const backendBase = "http://localhost:8000";
+      axios
+        .get(`${backendBase}${endpoint}`)
+        .then((res) => {
+          let data: any[] = res.data;
+          console.log("Fetched chart data:", data);  // Debugging line
+          setChartData(data);
+        })
+        .catch((err) => {
+          setError("Error loading data");
+          setChartData([]);
+        })
+        .finally(() => setLoading(false));
+    }
+  }
+}, [component]);
+
+useEffect(() => {
+  if (component.type === "radar-chart") {
+    const endpoint = component.data_binding?.endpoint;
+    if (endpoint) {
+      setLoading(true);
+      setError(null);
+      const backendBase = "http://localhost:8000";
+      axios
+        .get(`${backendBase}${endpoint}`)
+        .then((res) => {
+          let data: any[] = res.data;
+          console.log("Fetched data for Radar Chart:", data);  // Log the data
+          setChartData(data);  // Set the chart data
+        })
+        .catch((err) => {
+          setError("Error loading data");
+          setChartData([]);
+        })
+        .finally(() => setLoading(false));
+    }
+  }
+}, [component]);
+
+
+
 
   // Data list fetching effect
   useEffect(() => {
@@ -408,67 +450,15 @@ export const Renderer: React.FC<RendererProps> = ({ component, styles }) => {
       />
     );
   }
-  if (component.type === "radar-chart") {
-    if (loading) return <div id={component.id}>Loading data...</div>;
-    if (error) return <div id={component.id}>{error}</div>;
-    
-    // Use configured field names from attributes or data_binding
-    let actualLabelField = component.attributes?.["label-field"] || 
-                          component.data_binding?.label_field || 
-                          "name";
-    let actualDataField = component.attributes?.["data-field"] || 
-                         component.data_binding?.data_field || 
-                         "value";
-    
-    // If data_binding fields look like UUIDs (contain hyphens and are long), detect from data
-    const isUUID = (str: string) => str && str.length > 20 && str.includes('-');
-    
-    if ((isUUID(actualLabelField) || isUUID(actualDataField)) && chartData && chartData.length > 0) {
-      const firstItem = chartData[0];
-      const keys = Object.keys(firstItem);
-      
-      if (isUUID(actualLabelField)) {
-        actualLabelField = keys.find(k => ['name', 'label', 'attribute'].includes(k.toLowerCase())) || 
-                          keys.find(k => typeof firstItem[k] === 'string') || 
-                          'name';
-      }
-      
-      if (isUUID(actualDataField)) {
-        actualDataField = keys.find(k => ['value', 'count', 'amount'].includes(k.toLowerCase())) || 
-                         keys.find(k => typeof firstItem[k] === 'number') || 
-                         'value';
-      }
-      
-      console.log(`[Radar Chart] Detected fields from data - labelField: ${actualLabelField}, dataField: ${actualDataField}`);
-    } else {
-      console.log(`[Radar Chart] Using configured fields - labelField: ${actualLabelField}, dataField: ${actualDataField}`);
-    }
-    
-    return (
-      <RadarChartComponent
-        id={component.id}
-        title={component.title || component.name}
-        color={component.color}
-        data={chartData}
-        labelField={actualLabelField}
-        dataField={actualDataField}
-        options={component.chart || {}}
-        styles={style}
-      />
-    );
-  }
+  
 
   if (component.type === "bar-chart") {
     if (loading) return <div id={component.id}>Loading data...</div>;
     if (error) return <div id={component.id}>{error}</div>;
     
-    // Use configured field names from attributes or data_binding
-    let actualLabelField = component.attributes?.["label-field"] || 
-                          component.data_binding?.label_field || 
-                          "name";
-    let actualDataField = component.attributes?.["data-field"] || 
-                         component.data_binding?.data_field || 
-                         "value";
+    // Use configured field names from data_binding, with intelligent fallback
+    let actualLabelField = component.data_binding?.label_field || "name";
+    let actualDataField = component.data_binding?.data_field || "value";
     
     // If data_binding fields look like UUIDs (contain hyphens and are long), detect from data
     const isUUID = (str: string) => str && str.length > 20 && str.includes('-');
@@ -512,13 +502,9 @@ export const Renderer: React.FC<RendererProps> = ({ component, styles }) => {
     if (loading) return <div id={component.id}>Loading data...</div>;
     if (error) return <div id={component.id}>{error}</div>;
     
-    // Use configured field names from attributes or data_binding
-    let actualLabelField = component.attributes?.["label-field"] || 
-                          component.data_binding?.label_field || 
-                          "name";
-    let actualDataField = component.attributes?.["data-field"] || 
-                         component.data_binding?.data_field || 
-                         "value";
+    // Use configured field names from data_binding, with intelligent fallback
+    let actualLabelField = component.data_binding?.label_field || "pid";
+    let actualDataField = component.data_binding?.data_field || "value";
     
     // If data_binding fields look like UUIDs (contain hyphens and are long), detect from data
     const isUUID = (str: string) => str && str.length > 20 && str.includes('-');
@@ -528,7 +514,7 @@ export const Renderer: React.FC<RendererProps> = ({ component, styles }) => {
       const keys = Object.keys(firstItem);
       
       if (isUUID(actualLabelField)) {
-        actualLabelField = keys.find(k => ['name', 'label', 'attribute'].includes(k.toLowerCase())) || 
+        actualLabelField = keys.find(k => ['pid','name', 'label', 'attribute'].includes(k.toLowerCase())) || 
                           keys.find(k => typeof firstItem[k] === 'string') || 
                           'name';
       }
@@ -576,6 +562,102 @@ export const Renderer: React.FC<RendererProps> = ({ component, styles }) => {
         options={options}
         styles={style}
         dataBinding={component.data_binding}
+      />
+    );
+  }
+  if (component.type === "metric-card") {
+    if (loading) return <div id={component.id}>Loading data...</div>;
+    if (error) return <div id={component.id}>{error}</div>;
+    
+    // Calculate the last value from the data
+    let metricValue = 0;
+    if (chartData && chartData.length > 0) {
+      const lastItem = chartData[chartData.length - 1];
+      const dataField = component.data_binding?.data_field;
+      
+      // Try to get value from the specified data field
+      if (dataField && lastItem[dataField] !== undefined) {
+        metricValue = Number(lastItem[dataField]) || 0;
+      } 
+      // Fallback: try common field names
+      else {
+        const commonFields = ['value', 'count', 'amount', 'total', 'sum'];
+        for (const field of commonFields) {
+          if (lastItem[field] !== undefined) {
+            metricValue = Number(lastItem[field]) || 0;
+            break;
+          }
+        }
+      }
+    }
+    
+    return (
+      <MetricCardComponent
+        id={component.id}
+        metric-title={component.metric?.metricTitle || component.title || "Metric"}
+        format={component.metric?.format || "number"}
+        value-color={component.metric?.valueColor || "#2c3e50"}
+        value-size={component.metric?.valueSize || 32}
+        show-trend={component.metric?.showTrend !== false}
+        positive-color={component.metric?.positiveColor || "#27ae60"}
+        negative-color={component.metric?.negativeColor || "#e74c3c"}
+        value={metricValue}
+        trend={12}
+        data_binding={component.data_binding}
+      />
+    );
+  }
+
+  if (component.type === "radar-chart") {
+    if (loading) return <div id={component.id}>Loading data...</div>;
+    if (error) return <div id={component.id}>{error}</div>;
+    
+    // Use configured field names from data_binding, with intelligent fallback
+    let actualLabelField = component.data_binding?.label_field || "pid";
+    let actualDataField = component.data_binding?.data_field || "value";
+    
+    // If data_binding fields look like UUIDs (contain hyphens and are long), detect from data
+    const isUUID = (str: string) => str && str.length > 20 && str.includes('-');
+    
+    if ((isUUID(actualLabelField) || isUUID(actualDataField)) && chartData && chartData.length > 0) {
+      const firstItem = chartData[0];
+      const keys = Object.keys(firstItem);
+      
+      if (isUUID(actualLabelField)) {
+        actualLabelField = keys.find(k => ['name', 'label', 'attribute'].includes(k.toLowerCase())) || 
+                          keys.find(k => typeof firstItem[k] === 'string') || 
+                          'name';
+      }
+      
+      if (isUUID(actualDataField)) {
+        actualDataField = keys.find(k => ['value', 'count', 'amount'].includes(k.toLowerCase())) || 
+                         keys.find(k => typeof firstItem[k] === 'number') || 
+                         'value';
+      }
+      
+      console.log(`[Radar Chart] Detected fields from data - labelField: ${actualLabelField}, dataField: ${actualDataField}`);
+    } else {
+      console.log(`[Radar Chart] Using configured fields - labelField: ${actualLabelField}, dataField: ${actualDataField}`);
+    }
+    
+    console.log("Fetched data for Radar Chart:", chartData);
+
+    const dummyData = [
+  { pid: "Alfred", "A1 Grammar": 38.46, "A2 Total": 39.42 },
+  { pid: "Aya-23", "A1 Grammar": 38.46, "A2 Total": 30.77 },
+  { pid: "Aya-23 - 35B", "A1 Grammar": 34.62, "A2 Total": 37.5 }
+];
+    
+    return (
+      <RadarChartComponent
+        id={component.id}
+        title={component.title || component.name}
+        color={component.color}
+        data={dummyData}
+        labelField={actualLabelField}
+        dataField={actualDataField}
+        options={component.chart || {}}
+        styles={style}
       />
     );
   }
