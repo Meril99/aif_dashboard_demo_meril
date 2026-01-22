@@ -312,9 +312,9 @@
                               ],
                               "color": "#2c3e50",
                               "data_binding": {
-                                "data_field": "source",
-                                "endpoint": "/dataset/",
-                                "entity": "Dataset"
+                                "data_field": "pid",
+                                "endpoint": "/model/",
+                                "entity": "Model"
                               },
                               "display_order": 0,
                               "id": "iy7zsy",
@@ -352,8 +352,9 @@
                               ],
                               "color": "#2c3e50",
                               "data_binding": {
-                                "endpoint": "/dataset/",
-                                "entity": "Dataset"
+                                "source": "id",
+                                "endpoint": "/model/",
+                                "entity": "Model"
                               },
                               "display_order": 1,
                               "id": "ip3i4k",
