@@ -153,7 +153,8 @@
                             "series": "[{\"name\":\"A1 Total\",\"color\":\"#FF6B6B\"}, {\"name\":\"A2 Total\",\"color\":\"#4ECDC4\"}]",
                             "show-grid": "true",
                             "show-legend": "true",
-                            "stacked": "false"
+                            "stacked": "false",
+                            "xAxisLabelAngle": -90
                           },
                           "data_binding": {
                             "endpoint": "/chart/model-metric-values?metric_ids=5,10",
@@ -201,9 +202,9 @@
                             "chart-color": "#8884d8",
                             "chart-title": "Radar Chart",
                             "id": "iy2apa",
-                            "label-field": "name",
+                            "label-field": "pid",
                             "data-field": "value",
-                            "series": "[{\"name\":\"A1 Total\",\"color\":\"#FF6B6B\"}, {\"name\":\"A2 Total\",\"color\":\"#0088FE\"}, {\"name\":\"B1 Total\",\"color\":\"#FF6B6B\"}, {\"name\":\"B2 Total\",\"color\":\"#0088FE\"}, {\"name\":\"C1 Total\",\"color\":\"#FF6B6B\"}, {\"name\":\"C2 Total\",\"color\":\"#0088FE\"}]",
+                            "radar": "[{\"max\": \"100\", \"metrics\": [\"A1 Total\", \"A2 Total\", \"B1 Total\", \"B2 Total\", \"C1 Total\", \"C2 Total\"]}]",
                             "show-grid": "true",
                             "show-radius-axis": "true",
                             "show-tooltip": "true"

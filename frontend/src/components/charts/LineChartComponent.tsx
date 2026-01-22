@@ -88,6 +88,7 @@ export const LineChartComponent: React.FC<Props> = ({
             angle={xAxisLabelAngle}
             textAnchor={xAxisLabelAngle ? "end" : "middle"}
             height={xAxisLabelAngle ? 100 : undefined}
+            tick={{ fontSize: 8 }}
           />
           <YAxis />
           {showTooltip && <Tooltip />}

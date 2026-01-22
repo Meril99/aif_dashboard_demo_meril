@@ -54,6 +54,7 @@ export const BarChartComponent: React.FC<Props> = ({
   const showTooltip = options?.showTooltip ?? true;
   const legendPosition = options?.legendPosition || "top";
   const resolvedColor = resolveColor(color, options, styles);
+  const xAxisLabelAngle = options?.xAxisLabelAngle ?? 0;
 
   // Extract all metric columns (excluding the labelField column)
   const metricKeys = data && data.length > 0 ? Object.keys(data[0]).filter((key) => key !== labelField) : [];
@@ -77,8 +78,15 @@ export const BarChartComponent: React.FC<Props> = ({
     <div id={id} style={containerStyle}>
       {title && <h3 style={{ textAlign: "center", marginBottom: "10px" }}>{title}</h3>}
       <ResponsiveContainer width="100%" height={360}>
-        <BarChart data={data} margin={{ top: 5, right: 30, left: 20 }}>
+        <BarChart data={data} margin={{ top: 5, right: 30, left: 20, bottom: xAxisLabelAngle ? 100 : 5}} >
           {showGrid && <CartesianGrid strokeDasharray="3 3" stroke={options?.gridColor} />}
+          <XAxis 
+                      // dataKey={labelField}
+                      // angle={xAxisLabelAngle}
+                      // textAnchor={xAxisLabelAngle ? "end" : "middle"}
+                      // height={xAxisLabelAngle ? 100 : undefined}
+                      // tick={{ fontSize: 8 }}
+                    />
           <YAxis />
           {showTooltip && <Tooltip />}
           {showLegend && <Legend verticalAlign={legendPosition} />}

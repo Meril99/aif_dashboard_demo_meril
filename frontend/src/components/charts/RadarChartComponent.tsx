@@ -1,4 +1,4 @@
-import React, { CSSProperties } from "react";
+import React, { CSSProperties, useMemo  } from "react";
 import {
   Legend,
   PolarAngleAxis as RPolarAngleAxis,
@@ -74,7 +74,7 @@ export const RadarChartComponent: React.FC<Props> = ({
   const resolvedColor = resolveColor(color, options, styles);
 
   // Extract all metric columns (excluding the labelField column)
-  const metricKeys = data && data.length > 0 ? Object.keys(data[0]).filter((key) => key !== labelField) : [];
+  // const metricKeys = data && data.length > 0 ? Object.keys(data[0]).filter((key) => key !== labelField) : [];
 
 
   // Parse series configuration for colors
@@ -92,24 +92,64 @@ export const RadarChartComponent: React.FC<Props> = ({
     }
   }
 
+  // Step 1: Get the metric names (keys for the radar chart)
+  const metricKeys = Object.keys(data[0]).filter((key) => key !== labelField); // Excluding the label field (e.g., "pid")
+
+  // Step 2: Organize the data for radar chart (models as series and metrics as axes)
+  const modelData = useMemo(() => {
+    if (!data || data.length === 0) return [];
+
+    return data.map((row) => {
+      const model: any = { metric: row[labelField] }; // Use `labelField` as model name (e.g., "pid")
+      
+      // Add the values for each metric
+      metricKeys.forEach((metric) => {
+        model[metric] = row[metric]; // Map the metric values
+      });
+
+      return model;
+    });
+  }, [data, labelField, metricKeys]);
+
+  // Step 3: Get all model names (series)
+  const modelNames = useMemo(() => {
+    if (!data || data.length === 0) return [];
+    return data.map((row) => row[labelField]); // Extract the model names (pid)
+  }, [data, labelField]);
+
+  if (modelData.length === 0) {
+    return (
+      <div id={id} style={containerStyle}>
+        <h3 style={{ textAlign: "center" }}>No data available</h3>
+      </div>
+    );
+  }
+
+  
+
   return (
     <div id={id} style={containerStyle}>
       {title && <h3 style={{ textAlign: "center", marginBottom: "10px" }}>{title}</h3>}
       <ResponsiveContainer width="100%" height={360}>
-        <RadarChart data={data} margin={{ top: 20, right: 80, bottom: 20, left: 80 }}>
+        <RadarChart 
+              data={modelData} 
+              margin={{ top: 20, right: 80, bottom: 20, left: 80 }}
+              // radar={{ metrics: ["A1 Total", "A2 Total", "B1 Total", "B2 Total", "C1 Total", "C2 Total"]}}
+              >
           <PolarGrid />
           <PolarAngleAxis dataKey="metric" />
           <PolarRadiusAxis />
           <Tooltip />
           <Legend verticalAlign={legendPosition} />
 
-          {metricKeys.map((metricKey) => (
+          {/* Render each model as a separate radar line */}
+          {modelNames.map((modelName) => (
             <Radar
-              key={metricKey}
-              name={metricKey}
-              dataKey={metricKey}
-              stroke={colorMap[metricKey] || resolveColor(color, options, styles)}
-              fill={colorMap[metricKey] || "#8884d8"}
+              key={modelName}
+              name={modelName}
+              dataKey={modelName} // This will represent each model's data
+              stroke={color || "#8884d8"}
+              fill={color || "#8884d8"}
               fillOpacity={0.6}
               isAnimationActive={options?.animate ?? true}
             />

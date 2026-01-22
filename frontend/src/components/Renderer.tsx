@@ -117,6 +117,30 @@ export const Renderer: React.FC<RendererProps> = ({ component, styles }) => {
   }
 }, [component]);
 
+useEffect(() => {
+  if (component.type === "radar-chart") {
+    const endpoint = component.data_binding?.endpoint;
+    if (endpoint) {
+      setLoading(true);
+      setError(null);
+      const backendBase = "http://localhost:8000";
+      axios
+        .get(`${backendBase}${endpoint}`)
+        .then((res) => {
+          let data: any[] = res.data;
+          console.log("Fetched data for Radar Chart:", data);  // Log the data
+          setChartData(data);  // Set the chart data
+        })
+        .catch((err) => {
+          setError("Error loading data");
+          setChartData([]);
+        })
+        .finally(() => setLoading(false));
+    }
+  }
+}, [component]);
+
+
 
 
   // Data list fetching effect
@@ -426,51 +450,7 @@ export const Renderer: React.FC<RendererProps> = ({ component, styles }) => {
       />
     );
   }
-  if (component.type === "radar-chart") {
-    if (loading) return <div id={component.id}>Loading data...</div>;
-    if (error) return <div id={component.id}>{error}</div>;
-    
-    // Use configured field names from data_binding, with intelligent fallback
-    let actualLabelField = component.data_binding?.label_field || "pid";
-    let actualDataField = component.data_binding?.data_field || "value";
-    
-    // If data_binding fields look like UUIDs (contain hyphens and are long), detect from data
-    const isUUID = (str: string) => str && str.length > 20 && str.includes('-');
-    
-    if ((isUUID(actualLabelField) || isUUID(actualDataField)) && chartData && chartData.length > 0) {
-      const firstItem = chartData[0];
-      const keys = Object.keys(firstItem);
-      
-      if (isUUID(actualLabelField)) {
-        actualLabelField = keys.find(k => ['name', 'label', 'attribute'].includes(k.toLowerCase())) || 
-                          keys.find(k => typeof firstItem[k] === 'string') || 
-                          'name';
-      }
-      
-      if (isUUID(actualDataField)) {
-        actualDataField = keys.find(k => ['value', 'count', 'amount'].includes(k.toLowerCase())) || 
-                         keys.find(k => typeof firstItem[k] === 'number') || 
-                         'value';
-      }
-      
-      console.log(`[Radar Chart] Detected fields from data - labelField: ${actualLabelField}, dataField: ${actualDataField}`);
-    } else {
-      console.log(`[Radar Chart] Using configured fields - labelField: ${actualLabelField}, dataField: ${actualDataField}`);
-    }
-    
-    return (
-      <RadarChartComponent
-        id={component.id}
-        title={component.title || component.name}
-        color={component.color}
-        data={chartData}
-        labelField={actualLabelField}
-        dataField={actualDataField}
-        options={component.chart || {}}
-        styles={style}
-      />
-    );
-  }
+  
 
   if (component.type === "bar-chart") {
     if (loading) return <div id={component.id}>Loading data...</div>;
@@ -624,6 +604,60 @@ export const Renderer: React.FC<RendererProps> = ({ component, styles }) => {
         value={metricValue}
         trend={12}
         data_binding={component.data_binding}
+      />
+    );
+  }
+
+  if (component.type === "radar-chart") {
+    if (loading) return <div id={component.id}>Loading data...</div>;
+    if (error) return <div id={component.id}>{error}</div>;
+    
+    // Use configured field names from data_binding, with intelligent fallback
+    let actualLabelField = component.data_binding?.label_field || "pid";
+    let actualDataField = component.data_binding?.data_field || "value";
+    
+    // If data_binding fields look like UUIDs (contain hyphens and are long), detect from data
+    const isUUID = (str: string) => str && str.length > 20 && str.includes('-');
+    
+    if ((isUUID(actualLabelField) || isUUID(actualDataField)) && chartData && chartData.length > 0) {
+      const firstItem = chartData[0];
+      const keys = Object.keys(firstItem);
+      
+      if (isUUID(actualLabelField)) {
+        actualLabelField = keys.find(k => ['name', 'label', 'attribute'].includes(k.toLowerCase())) || 
+                          keys.find(k => typeof firstItem[k] === 'string') || 
+                          'name';
+      }
+      
+      if (isUUID(actualDataField)) {
+        actualDataField = keys.find(k => ['value', 'count', 'amount'].includes(k.toLowerCase())) || 
+                         keys.find(k => typeof firstItem[k] === 'number') || 
+                         'value';
+      }
+      
+      console.log(`[Radar Chart] Detected fields from data - labelField: ${actualLabelField}, dataField: ${actualDataField}`);
+    } else {
+      console.log(`[Radar Chart] Using configured fields - labelField: ${actualLabelField}, dataField: ${actualDataField}`);
+    }
+    
+    console.log("Fetched data for Radar Chart:", chartData);
+
+    const dummyData = [
+  { pid: "Alfred", "A1 Grammar": 38.46, "A2 Total": 39.42 },
+  { pid: "Aya-23", "A1 Grammar": 38.46, "A2 Total": 30.77 },
+  { pid: "Aya-23 - 35B", "A1 Grammar": 34.62, "A2 Total": 37.5 }
+];
+    
+    return (
+      <RadarChartComponent
+        id={component.id}
+        title={component.title || component.name}
+        color={component.color}
+        data={dummyData}
+        labelField={actualLabelField}
+        dataField={actualDataField}
+        options={component.chart || {}}
+        styles={style}
       />
     );
   }
