@@ -7268,105 +7268,337 @@ from fastapi import Query
 from sqlalchemy import func
 from typing import Optional, List
 
+
+# V3
+import pandas as pd
+from fastapi import Query
+
 @app.get("/chart/model-metric-values")
 def chart_model_metric_values(
     database: Session = Depends(get_db),
-    metric_names: str = Query("B2 Total,C2 Total", description="Comma-separated metric names"),
-    metric_ids: Optional[str] = Query(None, description="Comma-separated metric IDs (overrides metric_names)"),
-    limit: int = Query(0, ge=0, description="Optional limit for debugging (0 = no limit)"),
+    metric_names: Optional[str] = Query(None, description="Comma-separated metric names, e.g. B2 Total,C2 Total"),
+    metric_ids: Optional[str] = Query(None, description="Comma-separated metric ids, e.g. 20,30"),
+    limit: Optional[int] = Query(None, ge=1, description="Optional limit (>=1). Omit to return all."),
 ):
-    # ---- Parse inputs ----
+    # ---- helpers ----
     def split_csv(s: str) -> List[str]:
         return [x.strip() for x in s.split(",") if x.strip()]
 
-    names = split_csv(metric_names)
+    # ---- resolve metric ids ----
+    resolved_ids: List[int] = []
 
-    ids: List[int] = []
     if metric_ids:
-        try:
-            ids = [int(x) for x in split_csv(metric_ids)]
-        except ValueError:
-            return {"error": "metric_ids must be comma-separated integers", "metric_ids": metric_ids}
+        # parse to ints (avoid IN('2','0',...) bug)
+        resolved_ids = [int(x) for x in split_csv(metric_ids)]
+    else:
+        # default to your desired metrics if none provided
+        if not metric_names:
+            metric_names = "B2 Total,C2 Total"
 
-    # ---- Base query: Measure -> Model, Metric ----
+        names = split_csv(metric_names)
+
+        # robust match: lower(trim()) on DB and input
+        names_norm = [n.strip().lower() for n in names]
+        resolved_ids = [
+            int(r[0]) for r in
+            database.query(Metric.id)
+                .filter(func.lower(func.trim(Metric.name)).in_(names_norm))
+                .all()
+        ]
+
+    if not resolved_ids:
+        return {"error": "No metric IDs resolved from the request."}
+
+    # ---- main query ----
     q = (
         database.query(
-            Model.pid.label("pid"),              # model name
-            Metric.name.label("metric"),         # metric name
+            Model.pid.label("pid"),
+            Metric.name.label("metric"),
             Measure.value.label("value"),
-            Measure.metric_id.label("metric_id"),
-            Measure.measurand_id.label("measurand_id"),
-            Measure.id.label("measure_id"),
         )
         .select_from(Measure)
         .join(Model, Model.id == Measure.measurand_id)
         .join(Metric, Metric.id == Measure.metric_id)
+        .filter(Measure.metric_id.in_(resolved_ids))
         .order_by(Model.pid, Metric.name, Measure.id)
     )
 
-    # ---- Apply filter: prefer ids if provided ----
-    requested = {}
-    if ids:
-        q = q.filter(Measure.metric_id.in_(ids))
-        requested = {"metric_ids": ids}
-    else:
-        # Robust name matching: trim + lower on BOTH sides
-        # Handles "B2 Total", "B2 Total ", "b2 total", etc.
-        names_norm = [n.strip().lower() for n in names if n.strip()]
-        if not names_norm:
-            return {"error": "No metric_names provided", "metric_names": metric_names}
-
-        q = q.filter(func.lower(func.trim(Metric.name)).in_(names_norm))
-        requested = {"metric_names": names}
-
-    if limit and limit > 0:
+    # IMPORTANT: only apply limit if provided (avoid LIMIT 0)
+    if limit is not None:
         q = q.limit(limit)
 
     rows = q.all()
 
-    # ---- If no rows, return diagnostics (not empty []) ----
-    if not rows:
-        # What metrics do we actually have?
-        metric_list = (
-            database.query(Metric.id, Metric.name)
-            .order_by(Metric.id)
-            .all()
-        )
-        # Show some sample joined rows without filters (prove joins work)
-        sample = (
-            database.query(
-                Model.pid.label("pid"),
-                Metric.name.label("metric"),
-                Measure.value.label("value"),
-            )
-            .select_from(Measure)
-            .join(Model, Model.id == Measure.measurand_id)
-            .join(Metric, Metric.id == Measure.metric_id)
-            .order_by(Measure.id)
-            .limit(10)
-            .all()
-        )
+    # Convert the result to a pandas DataFrame
+    df = pd.DataFrame(rows, columns=["pid", "metric", "value"])
 
-        return {
-            "requested": requested,
-            "matched_rows": 0,
-            "hint": "No rows matched. Likely metric_names mismatch (spacing/case) or you should use metric_ids.",
-            "available_metrics": [{"id": int(m.id), "name": m.name} for m in metric_list],
-            "sample_joined_rows": [{"pid": s.pid, "metric": s.metric, "value": float(s.value) if s.value is not None else None} for s in sample],
-        }
+    # Pivot the DataFrame to convert it into wide format
+    df_wide = df.pivot(index="pid", columns="metric", values="value").reset_index()
 
-    # ---- Normal successful return ----
-    return [
-        {
-            "pid": r.pid,
-            "metric": r.metric,
-            "value": float(r.value) if r.value is not None else None,
-            "metric_id": int(r.metric_id),
-            "measurand_id": int(r.measurand_id),
-            "measure_id": int(r.measure_id),
-        }
-        for r in rows
-    ]
+    # Return the wide-format DataFrame as JSON
+    return df_wide.to_dict(orient="records")
+
+
+
+
+# V2
+# @app.get("/chart/model-metric-values")
+# def chart_model_metric_values(
+#     database: Session = Depends(get_db),
+#     metric_names: Optional[str] = Query(None, description="Comma-separated metric names, e.g. B2 Total,C2 Total"),
+#     metric_ids: Optional[str] = Query(None, description="Comma-separated metric ids, e.g. 20,30"),
+#     debug: bool = Query(False, description="If true, include debug info"),
+#     limit: Optional[int] = Query(None, ge=1, description="Optional limit (>=1). Omit to return all."),
+# ):
+#     # ---- helpers ----
+#     def split_csv(s: str) -> List[str]:
+#         return [x.strip() for x in s.split(",") if x.strip()]
+
+#     # ---- resolve metric ids ----
+#     resolved_ids: List[int] = []
+
+#     if metric_ids:
+#         # parse to ints (avoid IN('2','0',...) bug)
+#         resolved_ids = [int(x) for x in split_csv(metric_ids)]
+#     else:
+#         # default to your desired metrics if none provided
+#         if not metric_names:
+#             metric_names = "B2 Total,C2 Total"
+
+#         names = split_csv(metric_names)
+
+#         # robust match: lower(trim()) on DB and input
+#         names_norm = [n.strip().lower() for n in names]
+#         resolved_ids = [
+#             int(r[0]) for r in
+#             database.query(Metric.id)
+#                 .filter(func.lower(func.trim(Metric.name)).in_(names_norm))
+#                 .all()
+#         ]
+
+#     if not resolved_ids:
+#         # return helpful info instead of empty []
+#         available = database.query(Metric.id, Metric.name).order_by(Metric.id).all()
+#         return {
+#             "matched_rows": 0,
+#             "reason": "No metric IDs resolved from the request.",
+#             "requested_metric_names": metric_names,
+#             "requested_metric_ids": metric_ids,
+#             "available_metrics": [{"id": int(m.id), "name": m.name} for m in available],
+#         }
+
+#     # ---- main query ----
+#     q = (
+#         database.query(
+#             Model.pid.label("pid"),
+#             Metric.name.label("metric"),
+#             Measure.value.label("value"),
+#             Measure.metric_id.label("metric_id"),
+#             Measure.measurand_id.label("measurand_id"),
+#             Measure.id.label("measure_id"),
+#         )
+#         .select_from(Measure)
+#         .join(Model, Model.id == Measure.measurand_id)
+#         .join(Metric, Metric.id == Measure.metric_id)
+#         .filter(Measure.metric_id.in_(resolved_ids))
+#         .order_by(Model.pid, Metric.name, Measure.id)
+#     )
+
+#     # IMPORTANT: only apply limit if provided (avoid LIMIT 0)
+#     if limit is not None:
+#         q = q.limit(limit)
+
+#     rows = q.all()
+
+#     if debug:
+#         # quick sanity: show counts by metric_id
+#         counts = (
+#             database.query(Measure.metric_id, func.count(Measure.id))
+#             .filter(Measure.metric_id.in_(resolved_ids))
+#             .group_by(Measure.metric_id)
+#             .all()
+#         )
+#         return {
+#             "resolved_metric_ids": resolved_ids,
+#             "row_count": len(rows),
+#             "counts_by_metric_id": {int(mid): int(c) for mid, c in counts},
+#             "sample_rows": [
+#                 {
+#                     "pid": r.pid,
+#                     "metric": r.metric,
+#                     "value": float(r.value) if r.value is not None else None,
+#                     "metric_id": int(r.metric_id),
+#                     "measurand_id": int(r.measurand_id),
+#                     "measure_id": int(r.measure_id),
+#                 }
+#                 for r in rows[:10]
+#             ],
+#         }
+
+#     return [
+#         {
+#             "pid": r.pid,
+#             "metric": r.metric,
+#             "value": float(r.value) if r.value is not None else None,
+#             "metric_id": int(r.metric_id),
+#             "measurand_id": int(r.measurand_id),
+#             "measure_id": int(r.measure_id),
+#         }
+#         for r in rows
+#     ]
+
+
+
+# V1
+# @app.get("/chart/model-metric-values")
+# def chart_model_metric_values(
+#     database: Session = Depends(get_db),
+#     metric_names: str = Query("B2 Total,C2 Total", description="Comma-separated metric names"),
+#     metric_ids: Optional[str] = Query(None, description="Comma-separated metric IDs (overrides metric_names)"),
+#     limit: int = Query(0, ge=0, description="Optional limit for debugging (0 = no limit)"),
+# ):
+#     # ---- Parse inputs ----
+#     def split_csv(s: str) -> List[str]:
+#         return [x.strip() for x in s.split(",") if x.strip()]
+
+#     names = split_csv(metric_names)
+
+#     ids: List[int] = []
+#     if metric_ids:
+#         try:
+#             ids = [int(x) for x in split_csv(metric_ids)]
+#         except ValueError:
+#             return {"error": "metric_ids must be comma-separated integers", "metric_ids": metric_ids}
+
+#     # ---- Base query: Measure -> Model, Metric ----
+#     q = (
+#         database.query(
+#             Model.pid.label("pid"),              # model name
+#             Metric.name.label("metric"),         # metric name
+#             Measure.value.label("value"),
+#             Measure.metric_id.label("metric_id"),
+#             Measure.measurand_id.label("measurand_id"),
+#             Measure.id.label("measure_id"),
+#         )
+#         .select_from(Measure)
+#         .join(Model, Model.id == Measure.measurand_id)
+#         .join(Metric, Metric.id == Measure.metric_id)
+#         .order_by(Model.pid, Metric.name, Measure.id)
+#     )
+
+#     # ---- Apply filter: prefer ids if provided ----
+#     requested = {}
+#     if ids:
+#         q = q.filter(Measure.metric_id.in_(ids))
+#         requested = {"metric_ids": ids}
+#     else:
+#         # Robust name matching: trim + lower on BOTH sides
+#         # Handles "B2 Total", "B2 Total ", "b2 total", etc.
+#         names_norm = [n.strip().lower() for n in names if n.strip()]
+#         if not names_norm:
+#             return {"error": "No metric_names provided", "metric_names": metric_names}
+
+#         q = q.filter(func.lower(func.trim(Metric.name)).in_(names_norm))
+#         requested = {"metric_names": names}
+
+#     if limit and limit > 0:
+#         q = q.limit(limit)
+
+#     rows = q.all()
+
+#     # ---- If no rows, return diagnostics (not empty []) ----
+#     if not rows:
+#         # What metrics do we actually have?
+#         metric_list = (
+#             database.query(Metric.id, Metric.name)
+#             .order_by(Metric.id)
+#             .all()
+#         )
+#         # Show some sample joined rows without filters (prove joins work)
+#         sample = (
+#             database.query(
+#                 Model.pid.label("pid"),
+#                 Metric.name.label("metric"),
+#                 Measure.value.label("value"),
+#             )
+#             .select_from(Measure)
+#             .join(Model, Model.id == Measure.measurand_id)
+#             .join(Metric, Metric.id == Measure.metric_id)
+#             .order_by(Measure.id)
+#             .limit(10)
+#             .all()
+#         )
+
+#         return {
+#             "requested": requested,
+#             "matched_rows": 0,
+#             "hint": "No rows matched. Likely metric_names mismatch (spacing/case) or you should use metric_ids.",
+#             "available_metrics": [{"id": int(m.id), "name": m.name} for m in metric_list],
+#             "sample_joined_rows": [{"pid": s.pid, "metric": s.metric, "value": float(s.value) if s.value is not None else None} for s in sample],
+#         }
+
+#     # ---- Normal successful return ----
+#     return [
+#         {
+#             "pid": r.pid,
+#             "metric": r.metric,
+#             "value": float(r.value) if r.value is not None else None,
+#             "metric_id": int(r.metric_id),
+#             "measurand_id": int(r.measurand_id),
+#             "measure_id": int(r.measure_id),
+#         }
+#         for r in rows
+#     ]
+
+
+
+
+
+from sqlalchemy import text
+
+@app.get("/debug/sqlite-file")
+def debug_sqlite_file(database: Session = Depends(get_db)):
+    rows = database.execute(text("PRAGMA database_list")).fetchall()
+    # rows are (seq, name, file)
+    return {"database_list": [{"seq": r[0], "name": r[1], "file": r[2]} for r in rows]}
+
+
+
+
+@app.get("/debug/join-sanity")
+def debug_join_sanity(database: Session = Depends(get_db)):
+    out = {}
+    out["measure_count"] = database.execute(text("SELECT COUNT(*) FROM measure")).scalar()
+    out["model_count"] = database.execute(text("SELECT COUNT(*) FROM model")).scalar()
+    out["metric_count"] = database.execute(text("SELECT COUNT(*) FROM metric")).scalar()
+
+    out["join_measure_model"] = database.execute(text("""
+        SELECT COUNT(*) FROM measure m
+        JOIN model mo ON mo.id = m.measurand_id
+    """)).scalar()
+
+    out["join_measure_metric"] = database.execute(text("""
+        SELECT COUNT(*) FROM measure m
+        JOIN metric me ON me.id = m.metric_id
+    """)).scalar()
+
+    out["join_all"] = database.execute(text("""
+        SELECT COUNT(*) FROM measure m
+        JOIN model mo ON mo.id = m.measurand_id
+        JOIN metric me ON me.id = m.metric_id
+    """)).scalar()
+
+    out["b2c2_count"] = database.execute(text("""
+        SELECT COUNT(*) FROM measure m
+        JOIN metric me ON me.id = m.metric_id
+        WHERE me.name IN ('B2 Total','C2 Total')
+    """)).scalar()
+
+    return out
+
+
+
+
 
 
 
