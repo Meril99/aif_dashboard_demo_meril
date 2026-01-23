@@ -269,6 +269,8 @@ export const Renderer: React.FC<RendererProps> = ({ component, styles }) => {
     ? (seriesChartData.length > 0 ? seriesChartData : chartData)
     : chartData;
 
+
+
   if (component.type === "container" || component.type === "wrapper" || component.type === "component") {
     // Use the actual HTML tag if available, otherwise default to div
     const validTags = ["section", "article", "header", "footer", "nav", "aside", "main", "div", "ul", "ol", "li"];

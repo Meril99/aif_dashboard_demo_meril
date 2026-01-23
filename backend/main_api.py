@@ -796,6 +796,10 @@ def get_all_measure(detailed: bool = False, database: Session = Depends(get_db))
         for measure_item in measure_list:
             item_dict = measure_item.__dict__.copy()
             item_dict.pop('_sa_instance_state', None)
+
+            # Add model name if available
+            if hasattr(measure_item, 'measurand') and item_dict.measurand:
+                item_dict['name'] = measure_item.measurand.name
             
             # Add many-to-one relationships (foreign keys for lookup columns)
             if measure_item.measurand:
@@ -2010,6 +2014,17 @@ def get_all_metric(detailed: bool = False, database: Session = Depends(get_db)) 
             for measure_obj in measure_list:
                 measure_dict = measure_obj.__dict__.copy()
                 measure_dict.pop('_sa_instance_state', None)
+                # Add model_name if measurand is a Model (type_spec == 'model'), else fallback to Element name
+                model_name = None
+                if hasattr(measure_obj, 'measurand') and measure_obj.measurand:
+                    measurand_obj = measure_obj.measurand
+                    # If measurand is a Model instance, use its name
+                    if hasattr(measurand_obj, 'type_spec') and getattr(measurand_obj, 'type_spec', None) == 'model':
+                        model_name = getattr(measurand_obj, 'name', None)
+                    # Fallback: use Element name
+                    if not model_name:
+                        model_name = getattr(measurand_obj, 'name', None)
+                measure_dict['model_name'] = model_name
                 item_dict['measures'].append(measure_dict)
             
             result.append(item_dict)

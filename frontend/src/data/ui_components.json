@@ -159,9 +159,10 @@
                               "dataField": "measures.value",
                               "dataSource": "metric",
                               "endpoint": "/metric/",
-                              "label": "Series 1",
+                              "label": "Mistral",
                               "labelField": "name",
-                              "name": "Series_1"
+                              "filter": { "name": "Mistral" },
+                              "name": "Mistral"
                             },
                             {
                               "color": "#7e29ff",
