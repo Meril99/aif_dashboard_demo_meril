@@ -168,7 +168,6 @@
                               "dataField": "measures.value",
                               "dataSource": "metric",
                               "endpoint": "/metric/",
-                              "filter": "evaluation.observation[0].measure.find(m => m.metric.name === 'C2 Total')?.value",
                               "label": "Series 2",
                               "labelField": "name",
                               "name": "Series_2"
@@ -289,9 +288,9 @@
                           "series": [
                             {
                               "color": "#4CAF50",
-                              "dataField": "value",
-                              "dataSource": "metric.name",
-                              "endpoint": "/measure/",
+                              "dataField": "measures.value",
+                              "dataSource": "metric",
+                              "endpoint": "/metric/",
                               "label": "Series 1",
                               "labelField": "name",
                               "name": "Series_1"
