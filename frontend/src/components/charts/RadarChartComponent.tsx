@@ -1,19 +1,19 @@
-import React, { CSSProperties, useMemo  } from "react";
+import React, { CSSProperties, useCallback, useState } from "react";
 import {
   Legend,
-  PolarAngleAxis as RPolarAngleAxis,
-  PolarRadiusAxis as RPolarRadiusAxis,
+  PolarAngleAxis,
   PolarGrid,
+  PolarRadiusAxis,
   Radar,
   RadarChart,
   ResponsiveContainer,
   Tooltip,
 } from "recharts";
 
-// Cast the components to fix TypeScript issue
-const PolarAngleAxis = RPolarAngleAxis as any;
-const PolarRadiusAxis = RPolarRadiusAxis as any;
-
+interface SeriesConfig {
+  name: string;
+  color?: string;
+}
 
 interface Props {
   id: string;
@@ -22,9 +22,28 @@ interface Props {
   data: any[];
   labelField: string;
   dataField: string;
+  series?: SeriesConfig[];
   options?: Record<string, any>;
   styles?: CSSProperties;
 }
+
+const defaultSeriesColors = ["#4a90e2", "#10B981", "#F97316", "#F43F5E", "#8B5CF6", "#EC4899", "#06B6D4", "#84CC16"];
+
+// Helper to get nested values using dot notation (e.g., "measures.value")
+const getNestedValue = (obj: any, path: string): any => {
+  if (!obj || !path) return undefined;
+  const parts = path.split('.');
+  let current = obj;
+  for (const part of parts) {
+    if (current === null || current === undefined) return undefined;
+    if (Array.isArray(current)) {
+      current = current[0];
+      if (current === undefined) return undefined;
+    }
+    current = current[part];
+  }
+  return current;
+};
 
 const pickColor = (
   explicit?: string,
@@ -43,9 +62,37 @@ export const RadarChartComponent: React.FC<Props> = ({
   data,
   labelField,
   dataField,
+  series,
   options,
   styles,
 }) => {
+  const [hiddenSeries, setHiddenSeries] = useState<Set<string>>(new Set());
+
+  // Transform data if using nested fields (dot notation)
+  const isNestedField = (field: string) => field?.includes('.') || false;
+  const chartData = React.useMemo(() => {
+    if (series && series.length > 0) {
+      return data;
+    }
+    if (!isNestedField(labelField) && !isNestedField(dataField)) {
+      return data; // No transformation needed
+    }
+    return data.map((item: any) => ({
+      name: isNestedField(labelField) ? getNestedValue(item, labelField) : item[labelField],
+      value: isNestedField(dataField) ? getNestedValue(item, dataField) : item[dataField],
+    }));
+  }, [data, labelField, dataField, series]);
+
+  // Use transformed field names if we did transformation
+  const actualLabelField =
+    series && series.length > 0
+      ? "name"
+      : (isNestedField(labelField) || isNestedField(dataField)) ? 'name' : labelField;
+  const actualDataField =
+    series && series.length > 0
+      ? series[0]?.name || 'value'
+      : (isNestedField(labelField) || isNestedField(dataField)) ? 'value' : dataField;
+
   const containerStyle: CSSProperties = {
     width: "100%",
     height: "400px",
@@ -53,107 +100,71 @@ export const RadarChartComponent: React.FC<Props> = ({
     ...styles,
   };
 
-  const resolveColor = (
-    explicit?: string,
-    options?: Record<string, any>,
-    styles?: CSSProperties
-  ) => {
-    return (
-      explicit ||
-      options?.lineColor ||
-      (styles && (styles as any)["--chart-line-color"]) ||
-      "#4a90e2"
-    );
-  };
-
   const showGrid = options?.showGrid ?? true;
   const showTooltip = options?.showTooltip ?? true;
   const showLegend = options?.showLegend ?? true;
   const showRadiusAxis = options?.showRadiusAxis ?? true;
-  const legendPosition = options?.legendPosition || "bottom";
-  const resolvedColor = resolveColor(color, options, styles);
 
-  // Extract all metric columns (excluding the labelField column)
-  // const metricKeys = data && data.length > 0 ? Object.keys(data[0]).filter((key) => key !== labelField) : [];
-
-
-  // Parse series configuration for colors
-  const colorMap: { [key: string]: string } = {};
-  if (options?.series) {
-    try {
-      const parsedSeries = JSON.parse(options.series);
-      parsedSeries.forEach((s: any) => {
-        if (s.name && s.color) {
-          colorMap[s.name] = s.color;
-        }
-      });
-    } catch (e) {
-      console.error('Failed to parse series config:', e);
-    }
-  }
-
-  // Step 1: Get the metric names (keys for the radar chart)
-  const metricKeys = Object.keys(data[0]).filter((key) => key !== labelField); // Excluding the label field (e.g., "pid")
-
-  // Step 2: Organize the data for radar chart (models as series and metrics as axes)
-  const modelData = useMemo(() => {
-    if (!data || data.length === 0) return [];
-
-    return data.map((row) => {
-      const model: any = { metric: row[labelField] }; // Use `labelField` as model name (e.g., "pid")
-      
-      // Add the values for each metric
-      metricKeys.forEach((metric) => {
-        model[metric] = row[metric]; // Map the metric values
-      });
-
-      return model;
+  const handleLegendClick = useCallback((dataKey: string) => {
+    setHiddenSeries((prev) => {
+      const next = new Set(prev);
+      if (next.has(dataKey)) next.delete(dataKey);
+      else next.add(dataKey);
+      return next;
     });
-  }, [data, labelField, metricKeys]);
+  }, []);
 
-  // Step 3: Get all model names (series)
-  const modelNames = useMemo(() => {
-    if (!data || data.length === 0) return [];
-    return data.map((row) => row[labelField]); // Extract the model names (pid)
-  }, [data, labelField]);
-
-  if (modelData.length === 0) {
+  const renderLegend = (props: any) => {
+    const { payload } = props;
+    if (!payload) return null;
     return (
-      <div id={id} style={containerStyle}>
-        <h3 style={{ textAlign: "center" }}>No data available</h3>
+      <div style={{ display: "flex", justifyContent: "center", gap: "14px", flexWrap: "wrap", padding: "8px" }}>
+        {payload.map((entry: any, index: number) => (
+          <div
+            key={`legend-${index}`}
+            onClick={() => handleLegendClick(entry.dataKey)}
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: "6px",
+              cursor: "pointer",
+              opacity: hiddenSeries.has(entry.dataKey) ? 0.4 : 1,
+              textDecoration: hiddenSeries.has(entry.dataKey) ? "line-through" : "none",
+            }}
+          >
+            <span style={{ width: 12, height: 12, backgroundColor: entry.color, borderRadius: 2 }} />
+            <span style={{ fontSize: 13, color: "#374151" }}>{entry.value}</span>
+          </div>
+        ))}
       </div>
     );
-  }
-
-  
+  };
 
   return (
     <div id={id} style={containerStyle}>
       {title && <h3 style={{ textAlign: "center", marginBottom: "10px" }}>{title}</h3>}
       <ResponsiveContainer width="100%" height={360}>
-        <RadarChart 
-              data={modelData} 
-              margin={{ top: 20, right: 80, bottom: 20, left: 80 }}
-              // radar={{ metrics: ["A1 Total", "A2 Total", "B1 Total", "B2 Total", "C1 Total", "C2 Total"]}}
-              >
-          <PolarGrid />
-          <PolarAngleAxis dataKey="metric" />
-          <PolarRadiusAxis />
-          <Tooltip />
-          <Legend verticalAlign={legendPosition} />
-
-          {/* Render each model as a separate radar line */}
-          {modelNames.map((modelName) => (
-            <Radar
-              key={modelName}
-              name={modelName}
-              dataKey={modelName} // This will represent each model's data
-              stroke={color || "#8884d8"}
-              fill={color || "#8884d8"}
-              fillOpacity={0.6}
-              isAnimationActive={options?.animate ?? true}
-            />
-          ))}
+        <RadarChart data={chartData} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
+          {showGrid && <PolarGrid gridType={options?.gridType || "polygon"} />}
+          {PolarAngleAxis({ dataKey: actualLabelField })}
+          {showRadiusAxis && <PolarRadiusAxis />}
+          {showTooltip && <Tooltip />}
+          {showLegend && <Legend content={renderLegend} />}
+          {(series && series.length > 0 ? series : [{ name: title || actualDataField, color }]).map(
+            (s, index) => (
+              <Radar
+                key={s.name || index}
+                name={s.name || actualDataField}
+                dataKey={s.name || actualDataField}
+                stroke={s.color || pickColor(color, options, styles) || defaultSeriesColors[index % defaultSeriesColors.length]}
+                fill={s.color || pickColor(color, options, styles) || defaultSeriesColors[index % defaultSeriesColors.length]}
+                fillOpacity={0.35}
+                dot={{ r: options?.dotSize || 3 }}
+                strokeWidth={options?.strokeWidth || 2}
+                hide={hiddenSeries.has(s.name || actualDataField)}
+              />
+            )
+          )}
         </RadarChart>
       </ResponsiveContainer>
     </div>

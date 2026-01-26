@@ -1398,6 +1398,22 @@
       "style": {
         "marginBottom": "30px"
       }
+    },
+    {
+      "selectors": [
+        "heading"
+      ],
+      "style": {
+        "fontFamily": "Arial, Helvetica, sans-serif"
+      }
+    },
+    {
+      "selectors": [
+        "paragraph"
+      ],
+      "style": {
+        "fontFamily": "Arial, Helvetica, sans-serif"
+      }
     }
   ]
 }

@@ -21,11 +21,11 @@
                       "attributes": {
                         "id": "i8eko"
                       },
-                      "content": "BESSER",
+                      "content": "AI Factories Dashboard",
                       "description": "Text element",
                       "display_order": 0,
                       "id": "i8eko",
-                      "name": "BESSER",
+                      "name": "AI Factories Dashboard",
                       "type": "text"
                     },
                     {
@@ -77,6 +77,43 @@
                   "type": "container"
                 },
                 {
+                  "children": [
+                    {
+                      "class_list": [
+                        "heading"
+                      ],
+                      "content": "LLM's tested on the INL CEFR language tests",
+                      "description": "Text element",
+                      "display_order": 0,
+                      "id": "h1",
+                      "name": "LLM's tested on the INL CEFR language tests",
+                      "tag": "h1",
+                      "type": "text"
+                    },
+                    {
+                      "class_list": [
+                        "paragraph"
+                      ],
+                      "content": "Here the LLM's are tested on the official Luxembourgish CEFR language tests by INL.",
+                      "description": "Text element",
+                      "display_order": 1,
+                      "id": "p",
+                      "name": "Here the LLM's are tested on the official Luxembourgish CEFR language tests by INL.",
+                      "tag": "p",
+                      "type": "text"
+                    }
+                  ],
+                  "class_list": [
+                    "bdg-sect"
+                  ],
+                  "description": "section container",
+                  "display_order": 1,
+                  "id": "container_section",
+                  "name": "section",
+                  "tag": "section",
+                  "type": "container"
+                },
+                {
                   "attributes": {
                     "id": "idd2yg"
                   },
@@ -91,20 +128,12 @@
                             "animate": "true",
                             "chart-color": "#4CAF50",
                             "chart-title": "Line Chart",
-                            "curve-type": "linear",
+                            "curve-type": "monotone",
                             "id": "ikj6y7",
                             "line-width": "2",
-                            "label-field": "pid",
-                            "data-field": "value",
-                            "series": "[{\"name\":\"A1 Total\",\"color\":\"#FF6B6B\"}, {\"name\":\"A2 Total\",\"color\":\"#0088FE\"}]",
                             "show-grid": "true",
                             "show-legend": "true",
-                            "show-tooltip": "true",
-                            "xAxisLabelAngle": -90
-                          },
-                          "data_binding": {
-                            "endpoint": "/chart/model-metric-values?metric_ids=5,10",
-                            "entity": "Measure"
+                            "show-tooltip": "true"
                           },
                           "chart": {
                             "animate": true,
@@ -115,16 +144,37 @@
                             "lineWidth": 2,
                             "showGrid": true,
                             "showLegend": true,
-                            "showTooltip": true,
-                            "xAxisLabelAngle": -90
+                            "showTooltip": true
                           },
                           "class_list": [
                             "line-chart-component"
                           ],
-                          "color": "#FF6B6B",
+                          "color": "#4CAF50",
                           "display_order": 0,
                           "id": "ikj6y7",
                           "name": "Line Chart",
+                          "series": [
+                            {
+                              "color": "#f51313",
+                              "dataField": "measures.value",
+                              "dataSource": "metric",
+                              "endpoint": "/metric/",
+                              "label": "Mistral",
+                              "labelField": "name",
+                              "name": "Mistral",
+                              "filter": "model_name == \"Mistral\""
+                            },
+                            {
+                              "color": "#7e29ff",
+                              "dataField": "measures.value",
+                              "dataSource": "metric",
+                              "endpoint": "/metric/",
+                              "label": "Claude 3.5 Sonnet 2",
+                              "labelField": "name",
+                              "name": "Claude 3.5 Sonnet",
+                              "filter": "model_name == \"Claude 3.5 Sonnet\""
+                            }
+                          ],
                           "title": "Line Chart",
                           "type": "line-chart"
                         }
@@ -150,15 +200,9 @@
                             "chart-title": "Bar Chart",
                             "id": "icsdfx",
                             "orientation": "vertical",
-                            "series": "[{\"name\":\"A1 Total\",\"color\":\"#FF6B6B\"}, {\"name\":\"A2 Total\",\"color\":\"#4ECDC4\"}]",
                             "show-grid": "true",
                             "show-legend": "true",
-                            "stacked": "false",
-                            "xAxisLabelAngle": -90
-                          },
-                          "data_binding": {
-                            "endpoint": "/chart/model-metric-values?metric_ids=5,10",
-                            "entity": "Measure"
+                            "stacked": "false"
                           },
                           "chart": {
                             "animate": true,
@@ -179,6 +223,28 @@
                           "display_order": 0,
                           "id": "icsdfx",
                           "name": "Bar Chart",
+                          "series": [
+                            {
+                              "color": "#f51313",
+                              "dataField": "measures.value",
+                              "dataSource": "metric",
+                              "endpoint": "/metric/",
+                              "label": "Mistral",
+                              "labelField": "name",
+                              "name": "Mistral",
+                              "filter": "model_name == \"Mistral\""
+                            },
+                            {
+                              "color": "#7e29ff",
+                              "dataField": "measures.value",
+                              "dataSource": "metric",
+                              "endpoint": "/metric/",
+                              "label": "Claude 3.5 Sonnet 2",
+                              "labelField": "name",
+                              "name": "Claude 3.5 Sonnet",
+                              "filter": "model_name == \"Claude 3.5 Sonnet\""
+                            }
+                          ],
                           "title": "Bar Chart",
                           "type": "bar-chart"
                         }
@@ -202,16 +268,9 @@
                             "chart-color": "#8884d8",
                             "chart-title": "Radar Chart",
                             "id": "iy2apa",
-                            "label-field": "pid",
-                            "data-field": "value",
-                            "radar": "[{\"max\": \"100\", \"metrics\": [\"A1 Total\", \"A2 Total\", \"B1 Total\", \"B2 Total\", \"C1 Total\", \"C2 Total\"]}]",
                             "show-grid": "true",
                             "show-radius-axis": "true",
                             "show-tooltip": "true"
-                          },
-                          "data_binding": {
-                            "endpoint": "/chart/model-metric-values?metric_ids=5,10,15,20,25,30",
-                            "entity": "Measure"
                           },
                           "chart": {
                             "dotSize": 3,
@@ -230,6 +289,28 @@
                           "display_order": 0,
                           "id": "iy2apa",
                           "name": "Radar Chart",
+                          "series": [
+                            {
+                              "color": "#4CAF50",
+                              "dataField": "measures.value",
+                              "dataSource": "metric",
+                              "endpoint": "/metric/",
+                              "label": "Mistral",
+                              "labelField": "name",
+                              "name": "Mistral",
+                              "filter": "model_name == \"Mistral\""
+                            },
+                            {
+                              "color": "#2196F3",
+                              "dataField": "measures.value",
+                              "dataSource": "metric",
+                              "endpoint": "/metric/",
+                              "label": "Claude 3.5 Sonnet 2",
+                              "labelField": "name",
+                              "name": "Claude 3.5 Sonnet",
+                              "filter": "model_name == \"Claude 3.5 Sonnet\""
+                            }
+                          ],
                           "title": "Radar Chart",
                           "type": "radar-chart"
                         }
@@ -248,7 +329,7 @@
                     "gjs-row"
                   ],
                   "description": " component",
-                  "display_order": 1,
+                  "display_order": 2,
                   "id": "idd2yg",
                   "name": "idd2yg",
                   "type": "container"
@@ -306,11 +387,11 @@
                           "children": [
                             {
                               "attributes": {
-                                "data-field": "d9450a4f-5890-4e67-badc-d6299cea2351",
-                                "data-source": "b910ce24-f2bd-40de-b141-ce2956087223",
+                                "data-field": "75923b12-6486-4ae8-aef0-2b81f96f665b",
+                                "data-source": "16a4766d-cdc1-4e69-b582-014ad2bada56",
                                 "format": "number",
                                 "id": "iy7zsy",
-                                "metric-title": "Model Familys tested",
+                                "metric-title": "Model Families tested",
                                 "negative-color": "#e74c3c",
                                 "positive-color": "#27ae60",
                                 "show-trend": true,
@@ -323,7 +404,7 @@
                               ],
                               "color": "#2c3e50",
                               "data_binding": {
-                                "data_field": "pid",
+                                "data_field": "source",
                                 "endpoint": "/model/",
                                 "entity": "Model"
                               },
@@ -331,7 +412,7 @@
                               "id": "iy7zsy",
                               "metric": {
                                 "format": "number",
-                                "metricTitle": "Model Familys tested",
+                                "metricTitle": "Model Families tested",
                                 "negativeColor": "#e74c3c",
                                 "positiveColor": "#27ae60",
                                 "showTrend": true,
@@ -341,13 +422,13 @@
                                 "valueSize": 32
                               },
                               "name": "iy7zsy",
-                              "title": "Model Familys tested",
+                              "title": "Model Families tested",
                               "type": "metric-card"
                             },
                             {
                               "attributes": {
-                                "data-field": "source",
-                                "data-source": "model",
+                                "data-field": "ee1a94d3-27c9-4669-9134-a2cae7488053",
+                                "data-source": "16a4766d-cdc1-4e69-b582-014ad2bada56",
                                 "format": "number",
                                 "id": "ip3i4k",
                                 "metric-title": "Total Models evaluated",
@@ -363,7 +444,7 @@
                               ],
                               "color": "#2c3e50",
                               "data_binding": {
-                                "source": "source",
+                                "data_field": "pid",
                                 "endpoint": "/model/",
                                 "entity": "Model"
                               },
@@ -403,6 +484,7 @@
                               ],
                               "color": "#2c3e50",
                               "data_binding": {
+                                "data_field": "Metric",
                                 "endpoint": "/measure/",
                                 "entity": "Measure"
                               },
@@ -458,7 +540,7 @@
                     "dashboard-container"
                   ],
                   "description": " component",
-                  "display_order": 2,
+                  "display_order": 3,
                   "id": "i75sw8",
                   "name": "i75sw8",
                   "type": "container"
@@ -514,7 +596,7 @@
                     "endpoint": "/comments/",
                     "entity": "Comments"
                   },
-                  "display_order": 3,
+                  "display_order": 4,
                   "id": "ioj8df",
                   "name": "Comments",
                   "title": "Comments",
@@ -677,7 +759,7 @@
                     }
                   ],
                   "description": "footer container",
-                  "display_order": 4,
+                  "display_order": 5,
                   "id": "iru6jv",
                   "name": "iru6jv",
                   "tag": "footer",
