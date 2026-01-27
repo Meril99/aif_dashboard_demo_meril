@@ -432,8 +432,25 @@ const getSeriesValue = (metricRow: any, seriesCfg: any): number | null => {
       );
     }
 
+    // PSA 
     const handleClick = () => {
-      // Handle button events
+      // DOWNLOAD ACTION
+      if (component.action_type === "download") {
+        const attrs = component.attributes?.attributes ?? component.attributes ?? {};
+        const url = attrs["download-url"];
+        const filename = attrs["filename"] || "download.pdf";
+
+        if (url) {
+          const backendBase = process.env.REACT_APP_API_URL || "http://localhost:8000";
+          const fullUrl = url.startsWith("http") ? url : backendBase + url;
+          downloadFile(fullUrl, filename);
+        } else {
+          console.error("Download button clicked but no download-url provided", component);
+        }
+        return;
+      }
+
+      // EXISTING NAVIGATION LOGIC
       if (component.events && Array.isArray(component.events)) {
         component.events.forEach((event: any) => {
           if (event.type === "onClick" && event.actions) {
@@ -441,19 +458,19 @@ const getSeriesValue = (metricRow: any, seriesCfg: any): number | null => {
               if (action.kind === "Transition" && action.target_screen_path) {
                 navigate(action.target_screen_path);
               } else if (action.kind === "Transition" && action.target_screen) {
-                // Fallback to target screen name if path not available
-                const targetPath = `/${action.target_screen.toLowerCase().replace(/\s+/g, '-')}`;
+                const targetPath = `/${action.target_screen
+                  .toLowerCase()
+                  .replace(/\s+/g, "-")}`;
                 navigate(targetPath);
               }
             });
           }
         });
-      }
-      // Fallback to targetScreen if events not available
-      else if (component.target_screen_path) {
+      } else if (component.target_screen_path) {
         navigate(component.target_screen_path);
       }
     };
+
     
     // Filter out 'style' from attributes
     const { style: _, ...safeAttributes } = component.attributes || {};
@@ -758,3 +775,21 @@ const getSeriesValue = (metricRow: any, seriesCfg: any): number | null => {
     </div>
   );
 };
+
+// PSA
+async function downloadFile(url: string, filename: string) {
+  const res = await fetch(url, { method: "GET" });
+  if (!res.ok) throw new Error(`Download failed: ${res.status}`);
+  const blob = await res.blob();
+  const objectUrl = window.URL.createObjectURL(blob);
+
+  const a = document.createElement("a");
+  a.href = objectUrl;
+  a.download = filename || "download.pdf";
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+
+  window.URL.revokeObjectURL(objectUrl);
+}
+
