@@ -230,22 +230,11 @@ const getSeriesValue = (metricRow: any, seriesCfg: any): number | null => {
         }
       }
     }
-  }, [component.type, JSON.stringify(component.series)]); //PSA
+  }, [component.type, component.series]); 
 
   // Chart and metric card data fetching effect (legacy single data_binding)
   useEffect(() => {
     if (["bar-chart", "line-chart", "pie-chart", "radial-bar-chart", "radar-chart", "metric-card", "table"].includes(component.type)) {
-
-      // PSA: NEW: if series endpoints exist, don't also fetch via data_binding (prevents duplicate calls)
-      const rawSeries = component.series;
-      const seriesArr = Array.isArray(rawSeries)
-        ? rawSeries
-        : (typeof rawSeries === "string" ? (() => { try { return JSON.parse(rawSeries); } catch { return []; } })() : []);
-      const hasSeriesEndpoints =
-        Array.isArray(seriesArr) && seriesArr.some((s: any) => s?.endpoint || s?.dataSource || s?.["data-source"]);
-
-      if (hasSeriesEndpoints) return;
-
       const endpoint = component.data_binding?.endpoint;
       if (endpoint) {
         setLoading(true);
