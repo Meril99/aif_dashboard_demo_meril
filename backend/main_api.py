@@ -7257,7 +7257,7 @@ from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parent
 PDF_PATH = BASE_DIR / "reports.pdf" 
-LOG_PATH = BASE_DIR / "logs.txt"
+LOGS_TXT_PATH = Path(__file__).resolve().parent / "logs.txt"
 
 @app.get("/download/reports",  tags=["Download"])
 def download_reports():
@@ -7267,7 +7267,7 @@ def download_reports():
 
 @app.get("/download/logs",  tags=["Download"])
 def download_logs():
-    return FileResponse(str(PDF_PATH), media_type="application/pdf", filename="reports.pdf")
+    return FileResponse(str(LOGS_TXT_PATH), media_type="text/plain", filename="logs.txt")
 
 
 ############################################

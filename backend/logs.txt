@@ -1,0 +1,17 @@
+Home.tsx:28 Home component loaded
+Home.tsx:29 Current route: /
+Home.tsx:30 componentsData: {pages: Array(4)}
+Home.tsx:31 stylesData: {styles: Array(180)}
+Home.tsx:32 mainPageId: 7gx6FKvT6NwQwvkM
+Home.tsx:36 pages array: (4) [{…}, {…}, {…}, {…}]
+Home.tsx:58 Selected page: {components: Array(1), description: 'Home', id: '7gx6FKvT6NwQwvkM', is_main: true, name: 'Home', …}
+Home.tsx:59 Page components: [{…}]
+Home.tsx:69 Components to render: 1
+manifest.json:1 Manifest: Line: 1, column: 1, Syntax error.
+content.js:193 Potential problematic top edge return detected: y=0, timeAway=195ms
+content.js:313 Top edge return detected - applying bottom edge simulation
+TableComponent.tsx:1096 [TableComponent] Row selected in table ioj8df: {Comments: 'Test comment', TimeStamp: '2026-01-27T10:00:00', id: 3, Name: 'Tester ONE'}
+TableComponent.tsx:1096 [TableComponent] Row selected in table ioj8df: {Comments: 'Test comment', TimeStamp: '2026-01-27T10:00:00', id: 3, Name: 'Tester ONE'}
+TableComponent.tsx:1096 [TableComponent] Row selected in table ioj8df: {Comments: 'Test comment edit', TimeStamp: '2026-01-27T10:00:00', id: 3, Name: 'Tester ONE'}
+TableComponent.tsx:1096 [TableComponent] Row selected in table ioj8df: {Comments: 'There are 630 multiple choice questions in total.', TimeStamp: '2025-10-01T10:16:00', id: 2, Name: 'John SMITH'}
+TableComponent.tsx:1096 [TableComponent] Row selected in table ioj8df: {Comments: 'How many questions are there in total?', TimeStamp: '2025-10-01T10:15:00', id: 1, Name: 'Jane DOE'}

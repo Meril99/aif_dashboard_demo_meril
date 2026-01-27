@@ -2198,7 +2198,7 @@
                                         "id": "it587g",
                                         "button-label": "Download",
                                         "download-url": "/download/logs",
-                                        "filename": "reports.pdf"
+                                        "filename": "logs.txt"
                                       }
                                     },
                                   "button_type": "Customizable Button",
