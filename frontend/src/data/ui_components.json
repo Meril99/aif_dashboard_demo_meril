@@ -1730,17 +1730,20 @@
                             {
                               "children": [
                                 {
-                                  "action_type": "navigate",
+                                  "action_type": "download",
                                   "attributes": {
-                                    "button-label": "Download",
-                                    "data-action-type": "navigate",
-                                    "data-confirmation": "false",
-                                    "data-confirmation-message": "Are you sure?",
-                                    "data-target-screen": "custom",
-                                    "id": "it587g",
-                                    "target-screen": "custom",
-                                    "type": "button"
-                                  },
+                                      "type": "button",
+                                      "id": "it587g",
+                                      "label": "Download",
+                                      "action_type": "download",
+                                      "attributes": {
+                                        "type": "button",
+                                        "id": "it587g",
+                                        "button-label": "Download",
+                                        "download-url": "/download/reports",
+                                        "filename": "reports.pdf"
+                                      }
+                                    },
                                   "button_type": "Customizable Button",
                                   "class_list": [
                                     "action-button-component"

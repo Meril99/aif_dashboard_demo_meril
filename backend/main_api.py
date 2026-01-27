@@ -7251,7 +7251,16 @@ async def get_derivedBy_of_derived(derived_id: int, database: Session = Depends(
     }
 
 
+# PSA
+from fastapi.responses import FileResponse
+from pathlib import Path
 
+BASE_DIR = Path(__file__).resolve().parent
+PDF_PATH = BASE_DIR / "reports.pdf" 
+
+@app.get("/download/reports",  tags=["Download"])
+def download_reports():
+    return FileResponse(str(PDF_PATH), media_type="application/pdf", filename="reports.pdf")
 
 
 
