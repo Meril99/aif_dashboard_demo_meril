@@ -404,8 +404,8 @@
                               ],
                               "color": "#2c3e50",
                               "data_binding": {
-                                "data_field": "source",
-                                "endpoint": "/model/",
+                                "data_field": "unique_source",
+                                "endpoint": "/model_count_4_card/",
                                 "entity": "Model"
                               },
                               "display_order": 0,
@@ -444,8 +444,8 @@
                               ],
                               "color": "#2c3e50",
                               "data_binding": {
-                                "data_field": "pid",
-                                "endpoint": "/model/",
+                                "data_field": "unique_pid",
+                                "endpoint": "/model_count_4_card/",
                                 "entity": "Model"
                               },
                               "display_order": 1,
@@ -504,7 +504,66 @@
                               "name": "ilcwkv",
                               "title": "No. of Metrics",
                               "type": "metric-card"
+                            },
+                            {
+                              "attributes": {
+                                "format": "number",
+                                "metric-title": "Open-source models",
+                                "show-trend": true,
+                                "value-color": "#2c3e50",
+                                "value-size": 32
+                              },
+                              "class_list": ["metric-card-component", "has-data-binding"],
+                              "data_binding": {
+                                "data_field": "open_source_count",
+                                "endpoint": "/model_count_4_card/",
+                                "entity": "Model"
+                              },
+                              "display_order": 3,
+                              "id": "open_source_models_card",
+                              "metric": {
+                                "format": "number",
+                                "metricTitle": "Open-source models",
+                                "showTrend": true,
+                                "trend": 0,
+                                "value": 0,
+                                "valueColor": "#2c3e50",
+                                "valueSize": 32
+                              },
+                              "name": "open_source_models_card",
+                              "title": "Open-source models",
+                              "type": "metric-card"
+                            },
+                            {
+                              "attributes": {
+                                "format": "number",
+                                "metric-title": "Proprietary models",
+                                "show-trend": true,
+                                "value-color": "#2c3e50",
+                                "value-size": 32
+                              },
+                              "class_list": ["metric-card-component", "has-data-binding"],
+                              "data_binding": {
+                                "data_field": "proprietary_count",
+                                "endpoint": "/model_count_4_card/",
+                                "entity": "Model"
+                              },
+                              "display_order": 4,
+                              "id": "proprietary_models_card",
+                              "metric": {
+                                "format": "number",
+                                "metricTitle": "Proprietary models",
+                                "showTrend": true,
+                                "trend": 0,
+                                "value": 0,
+                                "valueColor": "#2c3e50",
+                                "valueSize": 32
+                              },
+                              "name": "proprietary_models_card",
+                              "title": "Proprietary models",
+                              "type": "metric-card"
                             }
+
                           ],
                           "class_list": [
                             "kpi-row"

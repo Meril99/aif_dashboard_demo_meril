@@ -6196,6 +6196,39 @@ def get_all_model(detailed: bool = False, database: Session = Depends(get_db)) -
         # Default: return flat entities (faster for charts/widgets without lookup columns)
         return database.query(Model).all()
 
+# PSA
+import logging
+
+logger = logging.getLogger("api")
+
+@app.get("/model_debug/", tags=["Model"])
+def get_all_model_debug(detailed: bool = False, database: Session = Depends(get_db)):
+    try:
+        # keep existing logic for now
+        return database.query(Model).all()
+    except Exception as e:
+        logger.exception("ERROR in /model/ endpoint")
+        raise HTTPException(status_code=500, detail=str(e))
+    
+
+from sqlalchemy import text
+from typing import Dict, Any, List
+@app.get("/model_count_4_card/", tags=["Model"], response_model=List[Dict[str, Any]])
+def model_count_4_card(database: Session = Depends(get_db)) -> List[Dict[str, Any]]:
+    row = database.execute(
+        text("""
+            SELECT
+              COUNT(*) AS total_rows,
+              COUNT(DISTINCT pid) AS unique_pid,
+              COUNT(DISTINCT source) AS unique_source,
+              SUM(CASE WHEN licensing = 'Open_Source' THEN 1 ELSE 0 END) AS open_source_count,
+              SUM(CASE WHEN licensing = 'Proprietary' THEN 1 ELSE 0 END) AS proprietary_count
+            FROM model
+        """)
+    ).mappings().one()
+
+    return [dict(row)]
+
 
 @app.get("/model/count/", response_model=None, tags=["Model"])
 def get_count_model(database: Session = Depends(get_db)) -> dict:
