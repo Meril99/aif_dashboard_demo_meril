@@ -716,6 +716,8 @@ export const TableComponent: React.FC<Props> = ({
                     const url = endpoint.startsWith("/") ? backendBase + endpoint : endpoint;
                     try {
                       await axios.post(url, processedValues);
+                      // ADD SUCCESS LOG HERE
+                      console.log(`[TableComponent] ADD successful for ${endpoint}:`, processedValues);
                       await fetchTableData();
                       setShowModal(false);
                     } catch (err) {
@@ -752,6 +754,11 @@ export const TableComponent: React.FC<Props> = ({
                     const fullUrl = url.startsWith("/") ? `${backendBase}${url}/${rowId}/` : `${url}/${rowId}/`;
                     try {
                       await axios.put(fullUrl, processedValues);
+                      // EDIT SUCCESS LOG HERE
+                       console.log("[TableComponent] EDIT successful:", {
+                          id: rowId,
+                          updatedValues: processedValues,
+                        });
                       await fetchTableData();
                       setShowModal(false);
                     } catch (err) {
@@ -1211,6 +1218,12 @@ export const TableComponent: React.FC<Props> = ({
                             const fullUrl = url.startsWith("/") ? `${backendBase}${url}/${rowId}/` : `${url}/${rowId}/`;
                             try {
                               await axios.delete(fullUrl);
+                               // DELETE SUCCESS LOG
+                                console.log("[TableComponent] DELETE successful:", {
+                                  id: rowId,
+                                  row,
+                                });
+
                               await fetchTableData();
                             } catch (err) {
                               console.error("Error deleting data:", err);

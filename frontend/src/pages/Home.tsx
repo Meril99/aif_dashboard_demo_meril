@@ -6,6 +6,7 @@ import { Renderer } from "../components/Renderer";
 import { applyStyle, StyleData } from "../utils/applyStyle";
 
 // Type definitions for the UI components data structure
+//Describes one object from the ui_components.json file
 interface PageData {
   id: string;
   name: string;
@@ -15,6 +16,7 @@ interface PageData {
   components: any[];
 }
 
+//Describes the pages (=objects) array/list from the ui_components.json file
 interface ComponentsData {
   pages: PageData[];
 }

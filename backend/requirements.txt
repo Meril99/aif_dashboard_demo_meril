@@ -5,3 +5,6 @@ typing-extensions>=4.0.0
 sqlalchemy>=1.4.0
 python-multipart>=0.0.5
 pandas
+immudb-py
+pytest
+httpx

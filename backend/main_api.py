@@ -1,3 +1,5 @@
+from contextlib import asynccontextmanager
+from fastapi import FastAPI
 import uvicorn
 import os, json
 import time as time_module
@@ -10,6 +12,12 @@ from sqlalchemy.orm import Session, sessionmaker
 from sqlalchemy.exc import SQLAlchemyError, IntegrityError
 from pydantic_classes import *
 from sql_alchemy import *
+from immudb import ImmudbClient
+import os
+import json
+from immudb.client import ImmudbClient
+import os
+from immudb import constants
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -24,7 +32,7 @@ logger = logging.getLogger(__name__)
 def init_db():
     SQLALCHEMY_DATABASE_URL = "sqlite:///./lux_data_2026_map.db"
     engine = create_engine(
-        SQLALCHEMY_DATABASE_URL, 
+        SQLALCHEMY_DATABASE_URL,
         connect_args={"check_same_thread": False},
         pool_size=10,
         max_overflow=20,
@@ -35,12 +43,110 @@ def init_db():
     Base.metadata.create_all(bind=engine)
     return SessionLocal
 
+
+####################################################################
+#
+# ImmuDb Startup function
+#
+######################################################################
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    client = ImmudbClient("immudb:3322")
+
+    client.login(
+        os.getenv("IMMUDB_USER", "immudb"),
+        os.getenv("IMMUDB_PASSWORD", "immudb"),
+    )
+
+    app.state.immudb_client = client
+
+    init_immudb(client)  # schema + db bootstrap
+
+    yield
+
+    client.logout()
+
+
+def init_immudb(client: ImmudbClient):
+    dbname = b"auditdb"
+
+    dbs = set(client.databaseList())
+    if "auditdb" not in dbs:
+        logger.info("auditdb not found → creating")
+        client.createDatabase(dbname)
+
+    client.useDatabase(dbname)
+
+    try:
+        client.sqlExec(
+            """
+            CREATE TABLE IF NOT EXISTS comments_audit_v2 (
+                tx_id        INTEGER,
+                action       VARCHAR,
+                entity       VARCHAR,
+                entity_id    INTEGER,
+                payload      VARCHAR,
+                created_at   INTEGER,
+                PRIMARY KEY (tx_id)
+            )
+            """,
+            {}
+        )
+        logger.info("audit schema ensured")
+    except Exception as e:
+        logger.exception("Failed to create audit schema", e)
+        raise
+
+def get_immudb_client(request: Request) -> ImmudbClient:
+    return request.app.state.immudb_client
+
+
+def immudb_log(
+    client: ImmudbClient,
+    action: str,
+    entity: str,
+    entity_id: int,
+    payload: dict,
+):
+    import time, json
+    from datetime import datetime
+
+    def serialize(obj):
+        if isinstance(obj, datetime):
+            return obj.isoformat()
+        return obj
+
+    safe_payload = {k: serialize(v) for k, v in payload.items()}
+
+    try:
+        client.sqlExec(
+            """
+            INSERT INTO comments_audit_v2
+            (tx_id, action, entity, entity_id, payload, created_at)
+            VALUES (@tx_id, @action, @entity, @entity_id, @payload, @created_at)
+            """,
+            {
+                "tx_id": time.time_ns(),
+                "action": action,
+                "entity": entity,
+                "entity_id": entity_id,
+                "payload": json.dumps(safe_payload),
+                "created_at": int(time.time()),
+            },
+        )
+    except Exception:
+        logger.exception("immudb audit insert failed")
+
+
+
 app = FastAPI(
     title="ai_sandbox_PSA_13_Jan_2026 API",
     description="Auto-generated REST API with full CRUD operations, relationship management, and advanced features",
     version="1.0.0",
     docs_url="/docs",
     redoc_url="/redoc",
+    lifespan=lifespan,
     openapi_tags=[
         {"name": "System", "description": "System health and statistics"},
         {"name": "Comments", "description": "Operations for Comments entities"},
@@ -134,6 +240,35 @@ async def value_error_handler(request: Request, exc: ValueError):
             "detail": "Invalid input data provided"
         }
     )
+
+
+@app.get("/audit/logs")
+def get_audit_logs():
+    ic = get_immudb_client()
+    result = ic.sqlQuery("""
+        SELECT
+            tx_id,
+            action,
+            entity,
+            entity_id,
+            payload,
+            created_at
+        FROM comments_audit_v2
+        ORDER BY tx_id DESC
+    """)
+
+    return [
+        {
+            "tx_id": tx_id,
+            "action": action,
+            "entity": entity,
+            "entity_id": entity_id,
+            "payload": payload,
+            "created_at": created_at,
+        }
+        for tx_id, action, entity, entity_id, payload, created_at in result
+    ]
+
 
 
 @app.exception_handler(IntegrityError)
@@ -306,20 +441,32 @@ async def get_comments(comments_id: int, database: Session = Depends(get_db)) ->
 
 
 @app.post("/comments/", response_model=None, tags=["Comments"])
-async def create_comments(comments_data: CommentsCreate, database: Session = Depends(get_db)) -> Comments:
-
-
+async def create_comments(
+    comments_data: CommentsCreate,
+    database: Session = Depends(get_db),
+    immudb_client: ImmudbClient = Depends(get_immudb_client),
+):
     db_comments = Comments(
-        Name=comments_data.Name,        TimeStamp=comments_data.TimeStamp,        Comments=comments_data.Comments        )
+        Name=comments_data.Name,
+        TimeStamp=comments_data.TimeStamp,
+        Comments=comments_data.Comments,
+    )
 
     database.add(db_comments)
     database.commit()
     database.refresh(db_comments)
 
+    # IMMUTABLE AUDIT LOG
+    immudb_log(
+        client=immudb_client,
+        action="ADD",
+        entity="Comments",
+        entity_id=db_comments.id,
+        payload=comments_data.model_dump(),
+    )
 
-
-    
     return db_comments
+
 
 
 @app.post("/comments/bulk/", response_model=None, tags=["Comments"])
@@ -375,27 +522,76 @@ async def bulk_delete_comments(ids: list[int], database: Session = Depends(get_d
     }
 
 @app.put("/comments/{comments_id}/", response_model=None, tags=["Comments"])
-async def update_comments(comments_id: int, comments_data: CommentsCreate, database: Session = Depends(get_db)) -> Comments:
-    db_comments = database.query(Comments).filter(Comments.id == comments_id).first()
+async def update_comments(
+    comments_id: int,
+    comments_data: CommentsCreate,
+    database: Session = Depends(get_db),
+    immudb_client: ImmudbClient = Depends(get_immudb_client),
+):
+
+    db_comments = (
+        database.query(Comments)
+        .filter(Comments.id == comments_id)
+        .first()
+    )
+
     if db_comments is None:
         raise HTTPException(status_code=404, detail="Comments not found")
 
-    setattr(db_comments, 'Name', comments_data.Name)
-    setattr(db_comments, 'TimeStamp', comments_data.TimeStamp)
-    setattr(db_comments, 'Comments', comments_data.Comments)
+    db_comments.Name = comments_data.Name
+    db_comments.TimeStamp = comments_data.TimeStamp
+    db_comments.Comments = comments_data.Comments
+
     database.commit()
     database.refresh(db_comments)
-    
+
+    # IMMUTABLE AUDIT LOG
+    immudb_log(
+        client=immudb_client,
+        action="EDIT",
+        entity="Comments",
+        entity_id=comments_id,
+        payload=comments_data.model_dump(),
+    )
+
     return db_comments
 
 
-@app.delete("/comments/{comments_id}/", response_model=None, tags=["Comments"])
-async def delete_comments(comments_id: int, database: Session = Depends(get_db)):
-    db_comments = database.query(Comments).filter(Comments.id == comments_id).first()
+    
+
+
+@app.delete("/comments/{comments_id}/", tags=["Comments"])
+async def delete_comments(
+    comments_id: int,
+    database: Session = Depends(get_db),
+    immudb_client: ImmudbClient = Depends(get_immudb_client),
+):
+
+    db_comments = (
+        database.query(Comments)
+        .filter(Comments.id == comments_id)
+        .first()
+    )
+
     if db_comments is None:
         raise HTTPException(status_code=404, detail="Comments not found")
+
+    #  IMMUTABLE AUDIT LOG
+    immudb_log(
+        client=immudb_client,
+        action="DELETE",
+        entity="Comments",
+        entity_id=comments_id,
+        payload={
+            "Name": db_comments.Name,
+            "TimeStamp": db_comments.TimeStamp,
+            "Comments": db_comments.Comments,
+        },
+    )
+
     database.delete(db_comments)
     database.commit()
+
     return db_comments
 
 

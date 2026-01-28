@@ -22,5 +22,30 @@ services:
       - sqlite_data:/app/data
 
 
+  immudb:
+    image: codenotary/immudb:latest
+    container_name: immudb
+    command: ["--auth"]
+    volumes:
+      - immudb_data:/var/lib/immudb
+
+  tests:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    command: pytest -v
+    depends_on:
+      - backend
+      - immudb
+    environment:
+      - IMMUDB_HOST=immudb
+      - IMMUDB_PORT=3322
+      - IMMUDB_USER=immudb
+      - IMMUDB_PASSWORD=immudb
+    volumes:
+      - ./backend:/app
+
 volumes:
   sqlite_data:
+  immudb_data:
+
