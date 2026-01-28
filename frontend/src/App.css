@@ -56,6 +56,16 @@
   object-fit: contain;
 }
 
+.bottombar-logo-snt {
+  width: 150px !important;
+  object-fit: contain !important;
+}
+
+.bottombar-logo-list {
+  width: 200px  !important;
+  object-fit: contain !important;
+}
+
 img.navbar-logo {
   width: 231px !important;
   height: 77px !important;

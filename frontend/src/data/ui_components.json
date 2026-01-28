@@ -748,6 +748,9 @@
                           "type": "container"
                         },
                         {
+                          "attributes": {
+                            "id": "i7jy7"
+                          },
                           "children": [
                             {
                               "attributes": {
@@ -804,41 +807,105 @@
                           ],
                           "description": " component",
                           "display_order": 1,
-                          "id": "Component_2",
-                          "name": "Component 2",
+                          "id": "i7jy7",
+                          "name": "i7jy7",
                           "type": "container"
                         },
                         {
+                          "attributes": {
+                            "id": "i8puk"
+                          },
                           "children": [
                             {
                               "attributes": {
                                 "id": "ij7xsi"
                               },
-                              "content": "Contact",
+                              "content": "Provided by",
                               "description": "Text element",
                               "display_order": 0,
                               "id": "ij7xsi",
-                              "name": "Contact",
+                              "name": "Provided by",
                               "tag": "h4",
                               "type": "text"
                             },
                             {
                               "attributes": {
-                                "id": "iw5bdf"
+                                "id": "ienpek"
                               },
-                              "content": "Email: info@besser-pearl.org\nPhone: (123) 456-7890",
-                              "description": "Text element",
+                              "children": [
+                                {
+                                  "attributes": {
+                                    "id": "ijwexa"
+                                  },
+                                  "children": [
+                                    {
+                                      "alt": "Image component",
+                                      "attributes": {
+                                        "id": "ijges7",
+                                        "src": "https://snt-highlights.uni.lu/wp-content/uploads/sites/172/2022/01/SnT_UL_logo2020-1024x330.png"
+                                      },
+                                      "description": "Image component",
+                                      "display_order": 0,
+                                      "id": "ijges7",
+                                      "name": "ijges7",
+                                      "src": "https://snt-highlights.uni.lu/wp-content/uploads/sites/172/2022/01/SnT_UL_logo2020-1024x330.png",
+                                      "tag": "img",
+                                      "type": "image"
+                                    }
+                                  ],
+                                  "class_list": [
+                                    "gjs-cell"
+                                  ],
+                                  "description": " container",
+                                  "display_order": 0,
+                                  "id": "ijwexa",
+                                  "name": "ijwexa",
+                                  "type": "container"
+                                },
+                                {
+                                  "attributes": {
+                                    "id": "if4kfn"
+                                  },
+                                  "children": [
+                                    {
+                                      "alt": "Image component",
+                                      "attributes": {
+                                        "id": "in1sos",
+                                        "src": "https://living-in.eu/sites/default/files/images/luxembourg_list-from-website.png"
+                                      },
+                                      "description": "Image component",
+                                      "display_order": 0,
+                                      "id": "in1sos",
+                                      "name": "in1sos",
+                                      "src": "https://living-in.eu/sites/default/files/images/luxembourg_list-from-website.png",
+                                      "tag": "img",
+                                      "type": "image"
+                                    }
+                                  ],
+                                  "class_list": [
+                                    "gjs-cell"
+                                  ],
+                                  "description": " container",
+                                  "display_order": 1,
+                                  "id": "if4kfn",
+                                  "name": "if4kfn",
+                                  "type": "container"
+                                }
+                              ],
+                              "class_list": [
+                                "gjs-row"
+                              ],
+                              "description": " container",
                               "display_order": 1,
-                              "id": "iw5bdf",
-                              "name": "Email: info@besser-pearl.org\nPhone: (123) 456-7890",
-                              "tag": "p",
-                              "type": "text"
+                              "id": "ienpek",
+                              "name": "ienpek",
+                              "type": "container"
                             }
                           ],
                           "description": " component",
                           "display_order": 2,
-                          "id": "Component_3",
-                          "name": "Component 3",
+                          "id": "i8puk",
+                          "name": "i8puk",
                           "type": "container"
                         }
                       ],
@@ -1052,8 +1119,8 @@
                       ],
                       "description": " container",
                       "display_order": 0,
-                      "id": "container_cell_6",
-                      "name": "Cell 6",
+                      "id": "container_cell_8",
+                      "name": "Cell 8",
                       "type": "container"
                     },
                     {
@@ -1066,24 +1133,27 @@
                               ],
                               "description": " container",
                               "display_order": 0,
-                              "id": "container_cell_8",
-                              "name": "Cell 8",
+                              "id": "container_cell_10",
+                              "name": "Cell 10",
                               "type": "container"
                             },
                             {
                               "children": [
                                 {
-                                  "action_type": "navigate",
+                                  "action_type": "download",
                                   "attributes": {
-                                    "button-label": "Download",
-                                    "data-action-type": "navigate",
-                                    "data-confirmation": "false",
-                                    "data-confirmation-message": "Are you sure?",
-                                    "data-target-screen": "custom",
-                                    "id": "ignume",
-                                    "target-screen": "custom",
-                                    "type": "button"
-                                  },
+                                      "type": "button",
+                                      "id": "it587g",
+                                      "label": "Download",
+                                      "action_type": "download",
+                                      "attributes": {
+                                        "type": "button",
+                                        "id": "it587g",
+                                        "button-label": "Download",
+                                        "download-url": "/download/logs",
+                                        "filename": "logs.txt"
+                                      }
+                                    },
                                   "button_type": "Customizable Button",
                                   "class_list": [
                                     "action-button-component"
@@ -1116,8 +1186,8 @@
                               ],
                               "description": " container",
                               "display_order": 1,
-                              "id": "container_cell_9",
-                              "name": "Cell 9",
+                              "id": "container_cell_11",
+                              "name": "Cell 11",
                               "type": "container"
                             },
                             {
@@ -1126,8 +1196,8 @@
                               ],
                               "description": " container",
                               "display_order": 2,
-                              "id": "container_cell_10",
-                              "name": "Cell 10",
+                              "id": "container_cell_12",
+                              "name": "Cell 12",
                               "type": "container"
                             }
                           ],
@@ -1146,8 +1216,8 @@
                       ],
                       "description": " container",
                       "display_order": 1,
-                      "id": "container_cell_7",
-                      "name": "Cell 7",
+                      "id": "container_cell_9",
+                      "name": "Cell 9",
                       "type": "container"
                     },
                     {
@@ -1212,8 +1282,8 @@
                           ],
                           "description": " component",
                           "display_order": 0,
-                          "id": "Component_9",
-                          "name": "Component 9",
+                          "id": "Component_6",
+                          "name": "Component 6",
                           "type": "container"
                         },
                         {
@@ -1273,41 +1343,99 @@
                           ],
                           "description": " component",
                           "display_order": 1,
-                          "id": "Component_10",
-                          "name": "Component 10",
+                          "id": "Component_7",
+                          "name": "Component 7",
                           "type": "container"
                         },
                         {
+                          "attributes": {
+                            "id": "in23ui"
+                          },
                           "children": [
                             {
                               "attributes": {
                                 "id": "iyjzk2"
                               },
-                              "content": "Contact",
+                              "content": "Provided by",
                               "description": "Text element",
                               "display_order": 0,
                               "id": "iyjzk2",
-                              "name": "Contact",
+                              "name": "Provided by",
                               "tag": "h4",
                               "type": "text"
                             },
                             {
                               "attributes": {
-                                "id": "inz5ld"
+                                "id": "i6b738"
                               },
-                              "content": "Email: info@besser-pearl.org\nPhone: (123) 456-7890",
-                              "description": "Text element",
+                              "children": [
+                                {
+                                  "children": [
+                                    {
+                                      "alt": "Image component",
+                                      "attributes": {
+                                        "id": "iaiffx",
+                                        "src": "https://snt-highlights.uni.lu/wp-content/uploads/sites/172/2022/01/SnT_UL_logo2020-1024x330.png"
+                                      },
+                                      "description": "Image component",
+                                      "display_order": 0,
+                                      "id": "iaiffx",
+                                      "name": "iaiffx",
+                                      "src": "https://snt-highlights.uni.lu/wp-content/uploads/sites/172/2022/01/SnT_UL_logo2020-1024x330.png",
+                                      "tag": "img",
+                                      "type": "image"
+                                    }
+                                  ],
+                                  "class_list": [
+                                    "gjs-cell"
+                                  ],
+                                  "description": " container",
+                                  "display_order": 0,
+                                  "id": "container_cell_13",
+                                  "name": "Cell 13",
+                                  "type": "container"
+                                },
+                                {
+                                  "children": [
+                                    {
+                                      "alt": "Image component",
+                                      "attributes": {
+                                        "id": "imr3uf",
+                                        "src": "https://living-in.eu/sites/default/files/images/luxembourg_list-from-website.png"
+                                      },
+                                      "description": "Image component",
+                                      "display_order": 0,
+                                      "id": "imr3uf",
+                                      "name": "imr3uf",
+                                      "src": "https://living-in.eu/sites/default/files/images/luxembourg_list-from-website.png",
+                                      "tag": "img",
+                                      "type": "image"
+                                    }
+                                  ],
+                                  "class_list": [
+                                    "gjs-cell"
+                                  ],
+                                  "description": " container",
+                                  "display_order": 1,
+                                  "id": "container_cell_14",
+                                  "name": "Cell 14",
+                                  "type": "container"
+                                }
+                              ],
+                              "class_list": [
+                                "gjs-row"
+                              ],
+                              "description": " container",
                               "display_order": 1,
-                              "id": "inz5ld",
-                              "name": "Email: info@besser-pearl.org\nPhone: (123) 456-7890",
-                              "tag": "p",
-                              "type": "text"
+                              "id": "i6b738",
+                              "name": "i6b738",
+                              "type": "container"
                             }
                           ],
                           "description": " component",
                           "display_order": 2,
-                          "id": "Component_11",
-                          "name": "Component 11",
+                          "id": "in23ui",
+                          "name": "in23ui",
                           "type": "container"
                         }
                       ],
@@ -1342,8 +1470,8 @@
               ],
               "description": " container",
               "display_order": 0,
-              "id": "container_cell_5",
-              "name": "Cell 5",
+              "id": "container_cell_7",
+              "name": "Cell 7",
               "type": "container"
             }
           ],
@@ -1821,8 +1949,8 @@
                   ],
                   "description": " component",
                   "display_order": 0,
-                  "id": "Component_4",
-                  "name": "Component 4",
+                  "id": "Component_2",
+                  "name": "Component 2",
                   "type": "container"
                 },
                 {
@@ -1936,8 +2064,8 @@
                   ],
                   "description": " component",
                   "display_order": 1,
-                  "id": "Component_5",
-                  "name": "Component 5",
+                  "id": "Component_3",
+                  "name": "Component 3",
                   "type": "container"
                 },
                 {
@@ -2371,8 +2499,8 @@
                           ],
                           "description": " component",
                           "display_order": 0,
-                          "id": "Component_6",
-                          "name": "Component 6",
+                          "id": "Component_4",
+                          "name": "Component 4",
                           "type": "container"
                         },
                         {
@@ -2432,41 +2560,99 @@
                           ],
                           "description": " component",
                           "display_order": 1,
-                          "id": "Component_7",
-                          "name": "Component 7",
+                          "id": "Component_5",
+                          "name": "Component 5",
                           "type": "container"
                         },
                         {
+                          "attributes": {
+                            "id": "inibj8"
+                          },
                           "children": [
                             {
                               "attributes": {
                                 "id": "i1b7um"
                               },
-                              "content": "Contact",
+                              "content": "Provided by",
                               "description": "Text element",
                               "display_order": 0,
                               "id": "i1b7um",
-                              "name": "Contact",
+                              "name": "Provided by",
                               "tag": "h4",
                               "type": "text"
                             },
                             {
                               "attributes": {
-                                "id": "i2ltt8"
+                                "id": "isrrhh"
                               },
-                              "content": "Email: info@besser-pearl.org\nPhone: (123) 456-7890",
-                              "description": "Text element",
+                              "children": [
+                                {
+                                  "children": [
+                                    {
+                                      "alt": "Image component",
+                                      "attributes": {
+                                        "id": "ibvpsj",
+                                        "src": "https://snt-highlights.uni.lu/wp-content/uploads/sites/172/2022/01/SnT_UL_logo2020-1024x330.png"
+                                      },
+                                      "description": "Image component",
+                                      "display_order": 0,
+                                      "id": "ibvpsj",
+                                      "name": "ibvpsj",
+                                      "src": "https://snt-highlights.uni.lu/wp-content/uploads/sites/172/2022/01/SnT_UL_logo2020-1024x330.png",
+                                      "tag": "img",
+                                      "type": "image"
+                                    }
+                                  ],
+                                  "class_list": [
+                                    "gjs-cell"
+                                  ],
+                                  "description": " container",
+                                  "display_order": 0,
+                                  "id": "container_cell_5",
+                                  "name": "Cell 5",
+                                  "type": "container"
+                                },
+                                {
+                                  "children": [
+                                    {
+                                      "alt": "Image component",
+                                      "attributes": {
+                                        "id": "i7ktg7",
+                                        "src": "https://living-in.eu/sites/default/files/images/luxembourg_list-from-website.png"
+                                      },
+                                      "description": "Image component",
+                                      "display_order": 0,
+                                      "id": "i7ktg7",
+                                      "name": "i7ktg7",
+                                      "src": "https://living-in.eu/sites/default/files/images/luxembourg_list-from-website.png",
+                                      "tag": "img",
+                                      "type": "image"
+                                    }
+                                  ],
+                                  "class_list": [
+                                    "gjs-cell"
+                                  ],
+                                  "description": " container",
+                                  "display_order": 1,
+                                  "id": "container_cell_6",
+                                  "name": "Cell 6",
+                                  "type": "container"
+                                }
+                              ],
+                              "class_list": [
+                                "gjs-row"
+                              ],
+                              "description": " container",
                               "display_order": 1,
-                              "id": "i2ltt8",
-                              "name": "Email: info@besser-pearl.org\nPhone: (123) 456-7890",
-                              "tag": "p",
-                              "type": "text"
+                              "id": "isrrhh",
+                              "name": "isrrhh",
+                              "type": "container"
                             }
                           ],
                           "description": " component",
                           "display_order": 2,
-                          "id": "Component_8",
-                          "name": "Component 8",
+                          "id": "inibj8",
+                          "name": "inibj8",
                           "type": "container"
                         }
                       ],
@@ -2521,463 +2707,6 @@
       "is_main": false,
       "name": "Reports",
       "route_path": "/reports"
-    },
-    {
-      "components": [
-        {
-          "children": [
-            {
-              "children": [
-                {
-                  "attributes": {
-                    "id": "ik1p2n"
-                  },
-                  "children": [
-                    {
-                      "attributes": {
-                        "id": "imxzkl"
-                      },
-                      "content": "AI Factories Dashboard",
-                      "description": "Text element",
-                      "display_order": 0,
-                      "id": "imxzkl",
-                      "name": "AI Factories Dashboard",
-                      "type": "text"
-                    },
-                    {
-                      "attributes": {
-                        "id": "inuifj"
-                      },
-                      "children": [
-                        {
-                          "attributes": {
-                            "href": "/",
-                            "id": "if7rxf"
-                          },
-                          "description": "Link element",
-                          "display_order": 0,
-                          "id": "if7rxf",
-                          "label": "Home",
-                          "name": "if7rxf",
-                          "tag": "a",
-                          "type": "link",
-                          "url": "/"
-                        },
-                        {
-                          "attributes": {
-                            "href": "/reports",
-                            "id": "i9f82f"
-                          },
-                          "description": "Link element",
-                          "display_order": 1,
-                          "id": "i9f82f",
-                          "label": "Reports",
-                          "name": "i9f82f",
-                          "tag": "a",
-                          "type": "link",
-                          "url": "/reports"
-                        },
-                        {
-                          "attributes": {
-                            "href": "/about",
-                            "id": "iobqi1"
-                          },
-                          "description": "Link element",
-                          "display_order": 2,
-                          "id": "iobqi1",
-                          "label": "Logs",
-                          "name": "iobqi1",
-                          "tag": "a",
-                          "type": "link",
-                          "url": "/about"
-                        },
-                        {
-                          "attributes": {
-                            "href": "/about",
-                            "id": "iixhid"
-                          },
-                          "description": "Link element",
-                          "display_order": 3,
-                          "id": "iixhid",
-                          "label": "About",
-                          "name": "iixhid",
-                          "tag": "a",
-                          "type": "link",
-                          "url": "/about"
-                        }
-                      ],
-                      "description": " component",
-                      "display_order": 1,
-                      "id": "inuifj",
-                      "name": "inuifj",
-                      "type": "container"
-                    }
-                  ],
-                  "description": "nav container",
-                  "display_order": 0,
-                  "id": "ik1p2n",
-                  "name": "ik1p2n",
-                  "tag": "nav",
-                  "type": "container"
-                },
-                {
-                  "children": [
-                    {
-                      "class_list": [
-                        "heading"
-                      ],
-                      "content": "Download Logs",
-                      "description": "Text element",
-                      "display_order": 0,
-                      "id": "h1_3",
-                      "name": "Download Logs",
-                      "tag": "h1",
-                      "type": "text"
-                    },
-                    {
-                      "class_list": [
-                        "paragraph"
-                      ],
-                      "content": "Here you can download the entire logs in pdf format based off of the interactions with the dashboard.",
-                      "description": "Text element",
-                      "display_order": 1,
-                      "id": "p_3",
-                      "name": "Here you can download the entire logs in pdf format based off of the interactions with the dashboard.",
-                      "tag": "p",
-                      "type": "text"
-                    }
-                  ],
-                  "class_list": [
-                    "bdg-sect"
-                  ],
-                  "description": "section container",
-                  "display_order": 1,
-                  "id": "container_section_3",
-                  "name": "section 3",
-                  "tag": "section",
-                  "type": "container"
-                },
-                {
-                  "children": [
-                    {
-                      "class_list": [
-                        "gjs-cell"
-                      ],
-                      "description": " container",
-                      "display_order": 0,
-                      "id": "container_cell_6",
-                      "name": "Cell 6",
-                      "type": "container"
-                    },
-                    {
-                      "children": [
-                        {
-                          "children": [
-                            {
-                              "class_list": [
-                                "gjs-cell"
-                              ],
-                              "description": " container",
-                              "display_order": 0,
-                              "id": "container_cell_8",
-                              "name": "Cell 8",
-                              "type": "container"
-                            },
-                            {
-                              "children": [
-                                {
-                                  "action_type": "download",
-                                  "attributes": {
-                                      "type": "button",
-                                      "id": "it587g",
-                                      "label": "Download",
-                                      "action_type": "download",
-                                      "attributes": {
-                                        "type": "button",
-                                        "id": "it587g",
-                                        "button-label": "Download",
-                                        "download-url": "/download/logs",
-                                        "filename": "logs.txt"
-                                      }
-                                    },
-                                  "button_type": "Customizable Button",
-                                  "class_list": [
-                                    "action-button-component"
-                                  ],
-                                  "description": "Button component",
-                                  "display_order": 0,
-                                  "events": [
-                                    {
-                                      "actions": [
-                                        {
-                                          "description": "Navigate to custom",
-                                          "kind": "Transition",
-                                          "name": "navigate_to_custom",
-                                          "target_screen_id": "custom"
-                                        }
-                                      ],
-                                      "name": "onClick_ignume",
-                                      "type": "onClick"
-                                    }
-                                  ],
-                                  "id": "ignume",
-                                  "label": "Download",
-                                  "name": "ignume",
-                                  "tag": "button",
-                                  "type": "button"
-                                }
-                              ],
-                              "class_list": [
-                                "gjs-cell"
-                              ],
-                              "description": " container",
-                              "display_order": 1,
-                              "id": "container_cell_9",
-                              "name": "Cell 9",
-                              "type": "container"
-                            },
-                            {
-                              "class_list": [
-                                "gjs-cell"
-                              ],
-                              "description": " container",
-                              "display_order": 2,
-                              "id": "container_cell_10",
-                              "name": "Cell 10",
-                              "type": "container"
-                            }
-                          ],
-                          "class_list": [
-                            "gjs-row"
-                          ],
-                          "description": " container",
-                          "display_order": 0,
-                          "id": "container_row_3",
-                          "name": "Row 3",
-                          "type": "container"
-                        }
-                      ],
-                      "class_list": [
-                        "gjs-cell"
-                      ],
-                      "description": " container",
-                      "display_order": 1,
-                      "id": "container_cell_7",
-                      "name": "Cell 7",
-                      "type": "container"
-                    },
-                    {
-                      "attributes": {
-                        "id": "is5dnu"
-                      },
-                      "class_list": [
-                        "gjs-cell"
-                      ],
-                      "description": " container",
-                      "display_order": 2,
-                      "id": "is5dnu",
-                      "name": "is5dnu",
-                      "type": "container"
-                    }
-                  ],
-                  "class_list": [
-                    "gjs-row"
-                  ],
-                  "description": " container",
-                  "display_order": 2,
-                  "id": "container_row_2",
-                  "name": "Row 2",
-                  "type": "container"
-                },
-                {
-                  "attributes": {
-                    "id": "ioqiqp"
-                  },
-                  "children": [
-                    {
-                      "attributes": {
-                        "id": "i3u68q"
-                      },
-                      "children": [
-                        {
-                          "children": [
-                            {
-                              "attributes": {
-                                "id": "ipk5nh"
-                              },
-                              "content": "About BESSER",
-                              "description": "Text element",
-                              "display_order": 0,
-                              "id": "ipk5nh",
-                              "name": "About BESSER",
-                              "tag": "h4",
-                              "type": "text"
-                            },
-                            {
-                              "attributes": {
-                                "id": "iuwmze"
-                              },
-                              "content": "BESSER is a low-code platform for building smarter software faster. Empower your development with our dashboard generator and modeling tools.",
-                              "description": "Text element",
-                              "display_order": 1,
-                              "id": "iuwmze",
-                              "name": "BESSER is a low-code platform for building smarter software faster. Empower your development with our dashboard generator and modeling tools.",
-                              "tag": "p",
-                              "type": "text"
-                            }
-                          ],
-                          "description": " component",
-                          "display_order": 0,
-                          "id": "Component_9",
-                          "name": "Component 9",
-                          "type": "container"
-                        },
-                        {
-                          "children": [
-                            {
-                              "attributes": {
-                                "id": "iaf7j8"
-                              },
-                              "content": "Quick Links",
-                              "description": "Text element",
-                              "display_order": 0,
-                              "id": "iaf7j8",
-                              "name": "Quick Links",
-                              "tag": "h4",
-                              "type": "text"
-                            },
-                            {
-                              "attributes": {
-                                "id": "iq9e37"
-                              },
-                              "children": [
-                                {
-                                  "attributes": {
-                                    "id": "iikjbc"
-                                  },
-                                  "children": [
-                                    {
-                                      "attributes": {
-                                        "href": "/about",
-                                        "id": "ilihei"
-                                      },
-                                      "description": "Link element",
-                                      "display_order": 0,
-                                      "id": "ilihei",
-                                      "label": "About",
-                                      "name": "ilihei",
-                                      "tag": "a",
-                                      "type": "link",
-                                      "url": "/about"
-                                    }
-                                  ],
-                                  "description": "li container",
-                                  "display_order": 0,
-                                  "id": "iikjbc",
-                                  "name": "iikjbc",
-                                  "tag": "li",
-                                  "type": "container"
-                                }
-                              ],
-                              "description": "ul container",
-                              "display_order": 1,
-                              "id": "iq9e37",
-                              "name": "iq9e37",
-                              "tag": "ul",
-                              "type": "container"
-                            }
-                          ],
-                          "description": " component",
-                          "display_order": 1,
-                          "id": "Component_10",
-                          "name": "Component 10",
-                          "type": "container"
-                        },
-                        {
-                          "children": [
-                            {
-                              "attributes": {
-                                "id": "iyjzk2"
-                              },
-                              "content": "Contact",
-                              "description": "Text element",
-                              "display_order": 0,
-                              "id": "iyjzk2",
-                              "name": "Contact",
-                              "tag": "h4",
-                              "type": "text"
-                            },
-                            {
-                              "attributes": {
-                                "id": "inz5ld"
-                              },
-                              "content": "Email: info@besser-pearl.org\nPhone: (123) 456-7890",
-                              "description": "Text element",
-                              "display_order": 1,
-                              "id": "inz5ld",
-                              "name": "Email: info@besser-pearl.org\nPhone: (123) 456-7890",
-                              "tag": "p",
-                              "type": "text"
-                            }
-                          ],
-                          "description": " component",
-                          "display_order": 2,
-                          "id": "Component_11",
-                          "name": "Component 11",
-                          "type": "container"
-                        }
-                      ],
-                      "description": " component",
-                      "display_order": 0,
-                      "id": "i3u68q",
-                      "name": "i3u68q",
-                      "type": "container"
-                    },
-                    {
-                      "attributes": {
-                        "id": "iv60dt"
-                      },
-                      "content": "© 2025 BESSER. All rights reserved.",
-                      "description": "Text element",
-                      "display_order": 1,
-                      "id": "iv60dt",
-                      "name": "© 2025 BESSER. All rights reserved.",
-                      "type": "text"
-                    }
-                  ],
-                  "description": "footer container",
-                  "display_order": 3,
-                  "id": "ioqiqp",
-                  "name": "ioqiqp",
-                  "tag": "footer",
-                  "type": "container"
-                }
-              ],
-              "class_list": [
-                "gjs-cell"
-              ],
-              "description": " container",
-              "display_order": 0,
-              "id": "container_cell_5",
-              "name": "Cell 5",
-              "type": "container"
-            }
-          ],
-          "class_list": [
-            "gjs-row"
-          ],
-          "description": " container",
-          "display_order": 0,
-          "id": "container_row",
-          "name": "Row",
-          "type": "container"
-        }
-      ],
-      "description": "Logs",
-      "id": "logs-1769498864685",
-      "is_main": false,
-      "name": "Logs",
-      "route_path": "/logs"
     }
   ]
 }
