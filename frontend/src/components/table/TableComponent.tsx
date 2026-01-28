@@ -94,7 +94,7 @@ export const TableComponent: React.FC<Props> = ({
           ? `/${id}/`
           : "";
     if (!endpoint) return;
-    const backendBase = "http://localhost:8000";
+    const backendBase = process.env.REACT_APP_API_URL || "http://localhost:8000";
     
     // Check if table has lookup columns - if so, request detailed data with joins
     const hasLookupColumns = options?.columns?.some(
@@ -466,7 +466,7 @@ export const TableComponent: React.FC<Props> = ({
       // Fetch lookup options for lookup columns
       const fetchLookupOptions = async () => {
         const options: Record<string, any[]> = {};
-        const backendBase = "http://localhost:8000";
+        const backendBase = process.env.REACT_APP_API_URL || "http://localhost:8000";
         
         for (const col of columns) {
           if (col.columnType === 'lookup' && col.entity) {
@@ -640,6 +640,7 @@ export const TableComponent: React.FC<Props> = ({
                   // Validate required fields
                   const missingFields: string[] = [];
                   columns.forEach(col => {
+                     if (dataBinding?.entity === "Comments" && col.field === "TimeStamp") return;
                     if (col.required) {
                       if (col.columnType === 'lookup') {
                         if (col.type === 'list') {
@@ -669,11 +670,15 @@ export const TableComponent: React.FC<Props> = ({
                   
                   setValidationError("");
                   const endpoint = getEndpoint();
-                  const backendBase = "http://localhost:8000";
+                  const backendBase = process.env.REACT_APP_API_URL || "http://localhost:8000";
                   
                   // Process form values based on column types
                   const processedValues: Record<string, any> = {};
                   columns.forEach(col => {
+                    if (dataBinding?.entity === "Comments" && col.field === "TimeStamp") {
+                      processedValues[col.field] = new Date().toISOString().replace(/\.\d{3}Z$/, "Z");
+                      return;
+                    }
                     // For lookup columns, use the path as the API field name
                     if (col.columnType === 'lookup' && col.path) {
                       if (col.type === 'list') {
@@ -792,6 +797,14 @@ export const TableComponent: React.FC<Props> = ({
                 style={{ display: "flex", flexDirection: "column", gap: "16px" }}
               >
                 {columns.map(col => {
+                  // Hide timestamp input (auto-set server/client side)
+                  if (dataBinding?.entity === "Comments" && col.field === "TimeStamp") {
+                    return (
+                      <div key={col.field} style={{ fontSize: "13px", color: "#64748b" }}>
+                        <strong>{col.label}:</strong> set automatically when you save
+                      </div>
+                    );
+                  }
                   // For lookup columns, render a select dropdown
                   if (col.columnType === 'lookup' && col.entity) {
                     const endpoint = col.entity.toLowerCase();
@@ -1214,7 +1227,7 @@ export const TableComponent: React.FC<Props> = ({
                             const endpoint = getEndpoint();
                             const rowId = getRowId(row);
                             const url = endpoint.replace(/\/$/, "");
-                            const backendBase = "http://localhost:8000";
+                            const backendBase = process.env.REACT_APP_API_URL || "http://localhost:8000";
                             const fullUrl = url.startsWith("/") ? `${backendBase}${url}/${rowId}/` : `${url}/${rowId}/`;
                             try {
                               await axios.delete(fullUrl);

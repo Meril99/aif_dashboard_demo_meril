@@ -305,8 +305,8 @@ Dataset.observation_2: Mapped[List["Observation"]] = relationship("Observation",
 Dataset.datashape: Mapped["Datashape"] = relationship("Datashape", back_populates="dataset_1", foreign_keys=[Dataset.datashape_id])
 
 # Database connection
-# DATABASE_URL = "sqlite:///render.db"  # SQLite connection
-# engine = create_engine(DATABASE_URL, echo=True)
+DATABASE_URL = "sqlite:///ai_sandbox_PSA_13_Jan_2026.db"  # SQLite connection
+engine = create_engine(DATABASE_URL, echo=True)
 
 # Create tables in the database
-# Base.metadata.create_all(engine, checkfirst=True)
+Base.metadata.create_all(engine, checkfirst=True)
