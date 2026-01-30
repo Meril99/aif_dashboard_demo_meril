@@ -6,19 +6,38 @@ from main_api import app
 
 
 # -------------------------
-# immudb test client
+# immudb helper (SAFE)
 # -------------------------
-def get_immudb_client():
+from typing import Optional, Dict
+
+def immudb_query(sql: str, params: Optional[Dict] = None):
     host = os.getenv("IMMUDB_HOST", "immudb")
     port = os.getenv("IMMUDB_PORT", "3322")
 
-    ic = ImmudbClient(f"{host}:{port}")
-    ic.login(
+    client = ImmudbClient(f"{host}:{port}")
+    client.login(
         os.getenv("IMMUDB_USER", "immudb"),
         os.getenv("IMMUDB_PASSWORD", "immudb"),
     )
-    ic.useDatabase(b"auditdb")
-    return ic
+    client.useDatabase(b"auditdb")
+
+    try:
+        if params:
+            return list(client.sqlQuery(sql, params))
+        return list(client.sqlQuery(sql))
+    finally:
+        client.logout()
+
+
+# -------------------------
+# helper: get last comment
+# -------------------------
+def get_last_comment(client: TestClient):
+    resp = client.get("/comments/")
+    assert resp.status_code == 200
+    comments = resp.json()
+    assert len(comments) >= 1
+    return comments[-1]
 
 
 # -------------------------
@@ -32,13 +51,11 @@ def test_add_comment_creates_immudb_audit():
     }
 
     with TestClient(app) as client:
-        response = client.post("/comments/", json=payload)
-        assert response.status_code == 200
-        comment = response.json()
+        resp = client.post("/comments/", json=payload)
+        assert resp.status_code == 200
+        comment = get_last_comment(client)
 
-    ic = get_immudb_client()
-
-    result = ic.sqlQuery(
+    rows = immudb_query(
         """
         SELECT action, entity, entity_id
         FROM comments_audit_v2
@@ -48,10 +65,9 @@ def test_add_comment_creates_immudb_audit():
         {"entity_id": comment["id"]},
     )
 
-    rows = list(result)
     assert len(rows) >= 1
-
     action, entity, entity_id = rows[0]
+
     assert action == "ADD"
     assert entity == "Comments"
     assert entity_id == comment["id"]
@@ -62,14 +78,14 @@ def test_add_comment_creates_immudb_audit():
 # -------------------------
 def test_edit_comment_creates_immudb_audit():
     with TestClient(app) as client:
-        payload = {
+        create_payload = {
             "Name": "edit-user",
             "TimeStamp": "2026-01-26T12:10:00",
             "Comments": "before edit",
         }
 
-        create_resp = client.post("/comments/", json=payload)
-        comment = create_resp.json()
+        client.post("/comments/", json=create_payload)
+        comment = get_last_comment(client)
         comment_id = comment["id"]
 
         updated = {
@@ -81,9 +97,7 @@ def test_edit_comment_creates_immudb_audit():
         resp = client.put(f"/comments/{comment_id}/", json=updated)
         assert resp.status_code == 200
 
-    ic = get_immudb_client()
-
-    result = ic.sqlQuery(
+    rows = immudb_query(
         """
         SELECT action
         FROM comments_audit_v2
@@ -93,7 +107,6 @@ def test_edit_comment_creates_immudb_audit():
         {"entity_id": comment_id},
     )
 
-    rows = list(result)
     assert len(rows) >= 1
     (action,) = rows[0]
     assert action == "EDIT"
@@ -110,16 +123,14 @@ def test_delete_comment_creates_immudb_audit():
             "Comments": "to be deleted",
         }
 
-        create_resp = client.post("/comments/", json=payload)
-        comment = create_resp.json()
+        client.post("/comments/", json=payload)
+        comment = get_last_comment(client)
         comment_id = comment["id"]
 
         delete_resp = client.delete(f"/comments/{comment_id}/")
         assert delete_resp.status_code == 200
 
-    ic = get_immudb_client()
-
-    result = ic.sqlQuery(
+    rows = immudb_query(
         """
         SELECT action
         FROM comments_audit_v2
@@ -129,21 +140,15 @@ def test_delete_comment_creates_immudb_audit():
         {"entity_id": comment_id},
     )
 
-    rows = list(result)
     assert len(rows) >= 1
     (action,) = rows[0]
     assert action == "DELETE"
 
 
+# -------------------------
+# FETCH ALL AUDIT LOGS
+# -------------------------
 def test_fetch_all_immudb_audit_logs():
-    """
-    This test validates that all audit logs can be fetched
-    in reverse chronological order (latest first).
-
-    This is the exact logic the future backend endpoint will use.
-    """
-
-    # Create 2 comments → generates 2 audit rows (ADD)
     with TestClient(app) as client:
         for i in range(2):
             payload = {
@@ -154,10 +159,7 @@ def test_fetch_all_immudb_audit_logs():
             resp = client.post("/comments/", json=payload)
             assert resp.status_code == 200
 
-    ic = get_immudb_client()
-
-    # Fetch ALL audit logs
-    result = ic.sqlQuery(
+    rows = immudb_query(
         """
         SELECT
             tx_id,
@@ -171,10 +173,8 @@ def test_fetch_all_immudb_audit_logs():
         """
     )
 
-    rows = list(result)
     assert len(rows) >= 2
 
-    # Validate row structure
     tx_id, action, entity, entity_id, payload, created_at = rows[0]
 
     assert isinstance(tx_id, int)
@@ -184,5 +184,4 @@ def test_fetch_all_immudb_audit_logs():
     assert isinstance(payload, str)
     assert isinstance(created_at, int)
 
-    # Ordering guarantee: newest first
     assert rows[0][0] > rows[1][0]

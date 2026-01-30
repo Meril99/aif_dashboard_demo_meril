@@ -26,24 +26,37 @@ services:
     image: codenotary/immudb:latest
     container_name: immudb
     command: ["--auth"]
+    ports:
+      - "8080:8080"   #  Web Console immudb
+      - "3322:3322"   #  immudb gRPC
     volumes:
       - immudb_data:/var/lib/immudb
 
-  tests:
-    build:
-      context: ./backend
-      dockerfile: Dockerfile
-    command: pytest -v
-    depends_on:
-      - backend
-      - immudb
-    environment:
-      - IMMUDB_HOST=immudb
-      - IMMUDB_PORT=3322
-      - IMMUDB_USER=immudb
-      - IMMUDB_PASSWORD=immudb
-    volumes:
-      - ./backend:/app
+# tests:
+#   build:
+#     context: ./backend
+#     dockerfile: Dockerfile
+#
+#   # Commande qui lançait pytest automatiquement
+#   # command: pytest -v
+#
+#   # Dépendances (API + immudb)
+#   depends_on:
+#     - backend
+#     - immudb
+#
+#   # Variables d’environnement immudb pour les tests
+#   environment:
+#     - IMMUDB_HOST=immudb
+#     - IMMUDB_PORT=3322
+#     - IMMUDB_USER=immudb
+#     - IMMUDB_PASSWORD=immudb
+#
+#   # Volumes montés pour exécuter les tests
+#   volumes:
+#     - ./backend:/app
+#     - sqlite_data:/app/data
+
 
 volumes:
   sqlite_data:

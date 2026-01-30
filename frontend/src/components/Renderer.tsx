@@ -1,6 +1,6 @@
 import React, { CSSProperties, useEffect, useState } from "react";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { applyStyle, StyleData } from "../utils/applyStyle";
 import { BarChartComponent } from "./charts/BarChartComponent";
 import { LineChartComponent } from "./charts/LineChartComponent";
@@ -9,6 +9,7 @@ import { MetricCardComponent } from "./charts/MetricCardComponent";
 import { TableComponent } from "./table/TableComponent";
 import { AgentComponent } from "./AgentComponent";
 import { MethodButton } from "./MethodButton";
+import { AuditLogsComponent } from "./audit/AuditLogsComponent";
 import "./table/TableComponent.css";
 
 export interface RendererProps {
@@ -16,9 +17,13 @@ export interface RendererProps {
   styles: StyleData[];
 }
 
+
+
 export const Renderer: React.FC<RendererProps> = ({ component, styles }) => {
   // BrowserRouter should be set up in index.tsx - hooks must be called unconditionally
   const navigate = useNavigate();
+  const location = useLocation();
+  const isLogsPage = location.pathname.includes("logs");
   
   // All hooks must be at the top level - declare all states here
   const [chartData, setChartData] = useState<any[]>(component.data ?? []);
@@ -384,6 +389,16 @@ const getSeriesValue = (metricRow: any, seriesCfg: any): number | null => {
   }
 
   if (component.type === "button" || component.type === "action-button") {
+
+      //REMOVE GENERIC DOWNLOAD BUTTON ONLY ON LOGS PAGE
+    if (
+      isLogsPage &&
+      component.action_type === "download" &&
+      (component.label === "Download" || component.name === "Download")
+    ) {
+      return null;
+    }
+
     // Check if this is a method button (from JSON attributes)
     const actionType = component.attributes?.["data-action-type"] || component.action_type;
     
@@ -690,6 +705,17 @@ const getSeriesValue = (metricRow: any, seriesCfg: any): number | null => {
       />
     );
   }
+
+if (component.type === "audit-logs") {
+  return (
+    <AuditLogsComponent
+      id={component.id}
+      title={component.name}
+      styles={style}
+      dataBinding={component.data_binding}
+    />
+  );
+}
 
 
 

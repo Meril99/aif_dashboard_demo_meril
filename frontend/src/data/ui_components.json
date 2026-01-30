@@ -2121,43 +2121,53 @@
                   "tag": "nav",
                   "type": "container"
                 },
-                {
-                  "children": [
-                    {
-                      "class_list": [
-                        "heading"
-                      ],
-                      "content": "Download Logs",
-                      "description": "Text element",
-                      "display_order": 0,
-                      "id": "h1_3",
-                      "name": "Download Logs",
-                      "tag": "h1",
-                      "type": "text"
-                    },
-                    {
-                      "class_list": [
-                        "paragraph"
-                      ],
-                      "content": "Here you can download the entire logs in pdf format based off of the interactions with the dashboard.",
-                      "description": "Text element",
-                      "display_order": 1,
-                      "id": "p_3",
-                      "name": "Here you can download the entire logs in pdf format based off of the interactions with the dashboard.",
-                      "tag": "p",
-                      "type": "text"
-                    }
-                  ],
-                  "class_list": [
-                    "bdg-sect"
-                  ],
-                  "description": "section container",
-                  "display_order": 1,
-                  "id": "container_section_3",
-                  "name": "section 3",
-                  "tag": "section",
-                  "type": "container"
-                },
+{
+  "id": "logs_root_container",
+  "type": "container",
+  "tag": "section",
+  "children": [
+    {
+      "children": [
+        {
+          "class_list": ["heading"],
+          "content": "Logs",
+          "description": "Text element",
+          "display_order": 0,
+          "id": "h1_3",
+          "name": "Logs",
+          "tag": "h1",
+          "type": "text"
+        },
+        {
+          "class_list": ["paragraph"],
+          "content": "",
+          "description": "Text element",
+          "display_order": 1,
+          "id": "p_3",
+          "name": "Here you can download the entire logs in pdf format based off of the interactions with the dashboard.",
+          "tag": "p",
+          "type": "text"
+        }
+      ],
+      "class_list": ["bdg-sect"],
+      "description": "section container",
+      "display_order": 1,
+      "id": "container_section_3",
+      "name": "section 3",
+      "tag": "section",
+      "type": "container"
+    },
+    {
+      "id": "audit_logs_table",
+      "type": "audit-logs",
+      "name": "Audit Logs",
+      "display_order": 2,
+      "data_binding": {
+        "endpoint": "/audit/logs"
+      }
+    }
+  ]
+},
                 {
                   "children": [
                     {

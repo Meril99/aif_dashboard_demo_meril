@@ -70,16 +70,26 @@ from pathlib import Path
 #     return engine
 
 def init_db():
-    db_url = os.getenv("SQLALCHEMY_DATABASE_URL", "sqlite:///./lux_data_2026_map.db")
+    db_url = os.getenv(
+        "SQLALCHEMY_DATABASE_URL",
+        "sqlite:////app/data/lux_data_2026_map.db"
+    )
     print("Using database:", db_url)
 
     engine = create_engine(
         db_url,
         connect_args={"check_same_thread": False} if db_url.startswith("sqlite") else {}
     )
-    SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+
+    SessionLocal = sessionmaker(
+        autocommit=False,
+        autoflush=False,
+        bind=engine,
+    )
+
     Base.metadata.create_all(bind=engine)
     return SessionLocal
+
 
 
 ####################################################################
@@ -88,33 +98,25 @@ def init_db():
 #
 ######################################################################
 
-@asynccontextmanager
-async def lifespan(app: FastAPI):
-    client = ImmudbClient("immudb:3322")
 
-    client.login(
-        os.getenv("IMMUDB_USER", "immudb"),
-        os.getenv("IMMUDB_PASSWORD", "immudb"),
-    )
 
-    app.state.immudb_client = client
 
-    init_immudb(client)  # schema + db bootstrap
-
-    yield
-
-    client.logout()
 
 
 def init_immudb(client: ImmudbClient):
     dbname = b"auditdb"
 
     dbs = set(client.databaseList())
+    logger.info(f"Databases found: {dbs}")
+
     if "auditdb" not in dbs:
         logger.info("auditdb not found → creating")
         client.createDatabase(dbname)
 
     client.useDatabase(dbname)
+
+    logger.info("auditdb selected")
+    logger.info(f"ensuring shema using client : {client}")
 
     try:
         client.sqlExec(
@@ -136,18 +138,36 @@ def init_immudb(client: ImmudbClient):
         logger.exception("Failed to create audit schema", e)
         raise
 
-def get_immudb_client(request: Request) -> ImmudbClient:
-    return request.app.state.immudb_client
+
+
+from typing import Optional, Dict
+def immudb_exec(sql: str, params: Optional[Dict] = None):
+    client = ImmudbClient("immudb:3322")
+
+    client.login(
+        os.getenv("IMMUDB_USER", "immudb"),
+        os.getenv("IMMUDB_PASSWORD", "immudb"),
+    )
+
+    client.useDatabase(b"auditdb")
+
+    try:
+        if params is None:
+            return client.sqlQuery(sql)
+        else:
+            return client.sqlExec(sql, params)
+    finally:
+        client.logout()
 
 
 def immudb_log(
-    client: ImmudbClient,
     action: str,
     entity: str,
     entity_id: int,
     payload: dict,
 ):
-    import time, json
+    import time
+    import json
     from datetime import datetime
 
     def serialize(obj):
@@ -157,7 +177,21 @@ def immudb_log(
 
     safe_payload = {k: serialize(v) for k, v in payload.items()}
 
+    logger.info(
+        "====================== RAW DATA RECEIVED FROM FRONT END: =================================================================================================================================================================="
+        f"action :{action}, type:f'{type(action)} , entity:{entity}, type :f'{type(entity)} , entity_id:{entity_id} type : f'{type(entity_id)} safe_payload:{safe_payload} type of safe_payload: f'{type(safe_payload)}"
+    )
+
+    client = ImmudbClient("immudb:3322")
+
     try:
+        client.login(
+            os.getenv("IMMUDB_USER", "immudb"),
+            os.getenv("IMMUDB_PASSWORD", "immudb"),
+        )
+
+        client.useDatabase(b"auditdb")
+
         client.sqlExec(
             """
             INSERT INTO comments_audit_v2
@@ -173,8 +207,15 @@ def immudb_log(
                 "created_at": int(time.time()),
             },
         )
+
     except Exception:
         logger.exception("immudb audit insert failed")
+
+    finally:
+        try:
+            client.logout()
+        except Exception:
+            pass
 
 
 
@@ -184,7 +225,6 @@ app = FastAPI(
     version="1.0.0",
     docs_url="/docs",
     redoc_url="/redoc",
-    lifespan=lifespan,
     openapi_tags=[
         {"name": "System", "description": "System health and statistics"},
         {"name": "Comments", "description": "Operations for Comments entities"},
@@ -248,6 +288,15 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+@app.on_event("startup")
+def startup_event():
+    client = ImmudbClient("immudb:3322")
+    client.login(
+        os.getenv("IMMUDB_USER", "immudb"),
+        os.getenv("IMMUDB_PASSWORD", "immudb"),
+    )
+    init_immudb(client)
+    client.logout()
 ############################################
 #
 #   Middleware
@@ -295,8 +344,7 @@ async def value_error_handler(request: Request, exc: ValueError):
 
 @app.get("/audit/logs")
 def get_audit_logs():
-    ic = get_immudb_client()
-    result = ic.sqlQuery("""
+    rows = immudb_exec("""
         SELECT
             tx_id,
             action,
@@ -317,9 +365,8 @@ def get_audit_logs():
             "payload": payload,
             "created_at": created_at,
         }
-        for tx_id, action, entity, entity_id, payload, created_at in result
+        for tx_id, action, entity, entity_id, payload, created_at in rows
     ]
-
 
 
 @app.exception_handler(IntegrityError)
@@ -379,37 +426,6 @@ def get_db():
         raise
     finally:
         db.close()
-# PSA
-def init_db():
-    # 1) Read from env (Render sets this), fallback to the disk path
-    db_url = os.getenv(
-        "SQLALCHEMY_DATABASE_URL",
-        "sqlite:////app/data/lux_data_2026_map.db"
-    )
-
-    logger.info(f"Using DB URL: {db_url}")
-
-    # 2) If sqlite absolute path, ensure parent dir exists (prevents 'unable to open database file')
-    if db_url.startswith("sqlite:////"):
-        db_path = Path(db_url.replace("sqlite:////", "/"))
-        db_path.parent.mkdir(parents=True, exist_ok=True)
-        logger.info(f"SQLite path: {db_path} (exists={db_path.exists()})")
-
-    # 3) Create engine
-    #    For SQLite, avoid pool_size/max_overflow; NullPool is safest on serverless-ish environments.
-    connect_args = {"check_same_thread": False} if db_url.startswith("sqlite") else {}
-    engine = create_engine(
-        db_url,
-        connect_args=connect_args,
-        poolclass=NullPool if db_url.startswith("sqlite") else None,
-        echo=False
-    )
-
-    # 4) Safe: creates tables if missing (does NOT wipe data)
-    Base.metadata.create_all(bind=engine)
-
-    # 5) Return session factory
-    return sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 ############################################
 #
@@ -526,7 +542,6 @@ async def get_comments(comments_id: int, database: Session = Depends(get_db)) ->
 async def create_comments(
     comments_data: CommentsCreate,
     database: Session = Depends(get_db),
-    immudb_client: ImmudbClient = Depends(get_immudb_client),
 ):
     db_comments = Comments(
         Name=comments_data.Name,
@@ -540,15 +555,13 @@ async def create_comments(
 
     # IMMUTABLE AUDIT LOG
     immudb_log(
-        client=immudb_client,
         action="ADD",
         entity="Comments",
         entity_id=db_comments.id,
         payload=comments_data.model_dump(),
     )
 
-    return db_comments
-
+    return
 
 
 @app.post("/comments/bulk/", response_model=None, tags=["Comments"])
@@ -608,9 +621,7 @@ async def update_comments(
     comments_id: int,
     comments_data: CommentsCreate,
     database: Session = Depends(get_db),
-    immudb_client: ImmudbClient = Depends(get_immudb_client),
 ):
-
     db_comments = (
         database.query(Comments)
         .filter(Comments.id == comments_id)
@@ -629,7 +640,6 @@ async def update_comments(
 
     # IMMUTABLE AUDIT LOG
     immudb_log(
-        client=immudb_client,
         action="EDIT",
         entity="Comments",
         entity_id=comments_id,
@@ -639,16 +649,11 @@ async def update_comments(
     return db_comments
 
 
-
-
-
 @app.delete("/comments/{comments_id}/", tags=["Comments"])
 async def delete_comments(
     comments_id: int,
     database: Session = Depends(get_db),
-    immudb_client: ImmudbClient = Depends(get_immudb_client),
 ):
-
     db_comments = (
         database.query(Comments)
         .filter(Comments.id == comments_id)
@@ -658,9 +663,8 @@ async def delete_comments(
     if db_comments is None:
         raise HTTPException(status_code=404, detail="Comments not found")
 
-    #  IMMUTABLE AUDIT LOG
+    # IMMUTABLE AUDIT LOG
     immudb_log(
-        client=immudb_client,
         action="DELETE",
         entity="Comments",
         entity_id=comments_id,
@@ -675,9 +679,6 @@ async def delete_comments(
     database.commit()
 
     return db_comments
-
-
-
 
 
 ############################################
@@ -4487,161 +4488,6 @@ async def get_derivedBy_of_direct(direct_id: int, database: Session = Depends(ge
         "derivedBy_count": len(derived_list),
         "derivedBy": derived_list
     }
-
-
-
-
-
-############################################
-#
-#   Comments functions
-#
-############################################
-
-@app.get("/comments/", response_model=None, tags=["Comments"])
-def get_all_comments(detailed: bool = False, database: Session = Depends(get_db)) -> list:
-    from sqlalchemy.orm import joinedload
-
-    return database.query(Comments).all()
-
-
-@app.get("/comments/count/", response_model=None, tags=["Comments"])
-def get_count_comments(database: Session = Depends(get_db)) -> dict:
-    """Get the total count of Comments entities"""
-    count = database.query(Comments).count()
-    return {"count": count}
-
-
-@app.get("/comments/paginated/", response_model=None, tags=["Comments"])
-def get_paginated_comments(skip: int = 0, limit: int = 100, detailed: bool = False, database: Session = Depends(get_db)) -> dict:
-    """Get paginated list of Comments entities"""
-    total = database.query(Comments).count()
-    comments_list = database.query(Comments).offset(skip).limit(limit).all()
-    return {
-        "total": total,
-        "skip": skip,
-        "limit": limit,
-        "data": comments_list
-    }
-
-
-@app.get("/comments/search/", response_model=None, tags=["Comments"])
-def search_comments(
-    database: Session = Depends(get_db)
-) -> list:
-    """Search Comments entities by attributes"""
-    query = database.query(Comments)
-
-
-    results = query.all()
-    return results
-
-
-@app.get("/comments/{comments_id}/", response_model=None, tags=["Comments"])
-async def get_comments(comments_id: int, database: Session = Depends(get_db)) -> Comments:
-    db_comments = database.query(Comments).filter(Comments.id == comments_id).first()
-    if db_comments is None:
-        raise HTTPException(status_code=404, detail="Comments not found")
-
-    response_data = {
-        "comments": db_comments,
-}
-    return response_data
-
-
-# PSA
-from datetime import datetime, timezone
-now = datetime.now(timezone.utc).replace(microsecond=0)
-
-@app.post("/comments/", response_model=None, tags=["Comments"])
-async def create_comments(comments_data: CommentsCreate, database: Session = Depends(get_db)) -> Comments:
-
-
-    db_comments = Comments(
-        TimeStamp=now,        Comments=comments_data.Comments,        Name=comments_data.Name        )
-
-    database.add(db_comments)
-    database.commit()
-    database.refresh(db_comments)
-
-    return db_comments
-
-
-@app.post("/comments/bulk/", response_model=None, tags=["Comments"])
-async def bulk_create_comments(items: list[CommentsCreate], database: Session = Depends(get_db)) -> dict:
-    """Create multiple Comments entities at once"""
-    created_items = []
-    errors = []
-
-    for idx, item_data in enumerate(items):
-        try:
-            # Basic validation for each item
-
-            db_comments = Comments(
-                TimeStamp=item_data.TimeStamp,                Comments=item_data.Comments,                Name=item_data.Name            )
-            database.add(db_comments)
-            database.flush()  # Get ID without committing
-            created_items.append(db_comments.id)
-        except Exception as e:
-            errors.append({"index": idx, "error": str(e)})
-
-    if errors:
-        database.rollback()
-        raise HTTPException(status_code=400, detail={"message": "Bulk creation failed", "errors": errors})
-
-    database.commit()
-    return {
-        "created_count": len(created_items),
-        "created_ids": created_items,
-        "message": f"Successfully created {len(created_items)} Comments entities"
-    }
-
-
-@app.delete("/comments/bulk/", response_model=None, tags=["Comments"])
-async def bulk_delete_comments(ids: list[int], database: Session = Depends(get_db)) -> dict:
-    """Delete multiple Comments entities at once"""
-    deleted_count = 0
-    not_found = []
-
-    for item_id in ids:
-        db_comments = database.query(Comments).filter(Comments.id == item_id).first()
-        if db_comments:
-            database.delete(db_comments)
-            deleted_count += 1
-        else:
-            not_found.append(item_id)
-
-    database.commit()
-
-    return {
-        "deleted_count": deleted_count,
-        "not_found": not_found,
-        "message": f"Successfully deleted {deleted_count} Comments entities"
-    }
-
-@app.put("/comments/{comments_id}/", response_model=None, tags=["Comments"])
-async def update_comments(comments_id: int, comments_data: CommentsCreate, database: Session = Depends(get_db)) -> Comments:
-    db_comments = database.query(Comments).filter(Comments.id == comments_id).first()
-    if db_comments is None:
-        raise HTTPException(status_code=404, detail="Comments not found")
-
-    setattr(db_comments, 'TimeStamp',  datetime.now(timezone.utc).replace(microsecond=0))
-    setattr(db_comments, 'Comments', comments_data.Comments)
-    setattr(db_comments, 'Name', comments_data.Name)
-    database.commit()
-    database.refresh(db_comments)
-
-    return db_comments
-
-
-@app.delete("/comments/{comments_id}/", response_model=None, tags=["Comments"])
-async def delete_comments(comments_id: int, database: Session = Depends(get_db)):
-    db_comments = database.query(Comments).filter(Comments.id == comments_id).first()
-    if db_comments is None:
-        raise HTTPException(status_code=404, detail="Comments not found")
-    database.delete(db_comments)
-    database.commit()
-    return db_comments
 
 
 
@@ -8878,10 +8724,85 @@ def download_reports():
     return FileResponse(str(PDF_PATH), media_type="application/pdf", filename="reports.pdf")
 
 
+def fetch_audit_logs(limit: int = 100, offset: int = 0):
+    return immudb_exec(
+        f"""
+        SELECT
+            tx_id,
+            action,
+            entity,
+            entity_id,
+            payload,
+            created_at
+        FROM comments_audit_v2
+        ORDER BY tx_id DESC
+        LIMIT {limit} OFFSET {offset}
+        """
+    )
 
-@app.get("/download/logs",  tags=["Download"])
-def download_logs():
-    return FileResponse(str(LOGS_TXT_PATH), media_type="text/plain", filename="logs.txt")
+
+from fastapi import Query
+from fastapi.responses import StreamingResponse
+import csv
+import io
+
+@app.get("/audit/logs/download", tags=["Audit"])
+def download_audit_logs(format: str = Query("csv", enum=["csv", "txt"])):
+    rows = immudb_exec("""
+        SELECT
+            tx_id,
+            action,
+            entity,
+            entity_id,
+            payload,
+            created_at
+        FROM comments_audit_v2
+        ORDER BY tx_id ASC
+    """)
+
+    if format == "csv":
+        output = io.StringIO()
+        writer = csv.writer(output)
+
+        writer.writerow([
+            "tx_id",
+            "action",
+            "entity",
+            "entity_id",
+            "payload",
+            "created_at"
+        ])
+
+        for r in rows:
+            writer.writerow(r)
+
+        output.seek(0)
+
+        return StreamingResponse(
+            output,
+            media_type="text/csv",
+            headers={
+                "Content-Disposition": "attachment; filename=audit_logs.csv"
+            },
+        )
+
+    # TXT format
+    output = io.StringIO()
+    for r in rows:
+        output.write(
+            f"tx_id={r[0]} | action={r[1]} | entity={r[2]} | "
+            f"entity_id={r[3]} | payload={r[4]} | created_at={r[5]}\n"
+        )
+
+    output.seek(0)
+
+    return StreamingResponse(
+        output,
+        media_type="text/plain",
+        headers={
+            "Content-Disposition": "attachment; filename=audit_logs.txt"
+        },
+    )
 
 
 ############################################
