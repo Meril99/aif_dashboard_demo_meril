@@ -111,6 +111,9 @@ def init_db():
 
 
 
+IMMUDB_HOST = os.getenv("IMMUDB_HOST", "immudb")
+IMMUDB_PORT = os.getenv("IMMUDB_PORT", "3322")
+
 
 
 
@@ -153,7 +156,7 @@ def init_immudb(client: ImmudbClient):
 
 from typing import Optional, Dict
 def immudb_exec(sql: str, params: Optional[Dict] = None):
-    client = ImmudbClient("immudb:3322")
+    client = ImmudbClient(f"{IMMUDB_HOST}:{IMMUDB_PORT}")
 
     client.login(
         os.getenv("IMMUDB_USER", "immudb"),
@@ -193,7 +196,7 @@ def immudb_log(
         f"action :{action}, type:f'{type(action)} , entity:{entity}, type :f'{type(entity)} , entity_id:{entity_id} type : f'{type(entity_id)} safe_payload:{safe_payload} type of safe_payload: f'{type(safe_payload)}"
     )
 
-    client = ImmudbClient("immudb:3322")
+    client = ImmudbClient(f"{IMMUDB_HOST}:{IMMUDB_PORT}")
 
     try:
         client.login(
@@ -301,7 +304,7 @@ app.add_middleware(
 
 @app.on_event("startup")
 def startup_event():
-    client = ImmudbClient("immudb:3322")
+    client = ImmudbClient(f"{IMMUDB_HOST}:{IMMUDB_PORT}")
     client.login(
         os.getenv("IMMUDB_USER", "immudb"),
         os.getenv("IMMUDB_PASSWORD", "immudb"),
