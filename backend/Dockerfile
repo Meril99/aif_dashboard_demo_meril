@@ -39,6 +39,6 @@ EXPOSE 8000 8080 3322
 # Start immudb + API
 # -------------------------
 CMD ["bash", "-c", "\
-    immudb server --dir=/var/lib/immudb --auth & \
+    immudb --dir=/var/lib/immudb --auth & \
     exec python main_api.py \
 "]
