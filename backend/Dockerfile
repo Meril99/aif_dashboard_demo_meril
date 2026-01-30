@@ -1,48 +1,44 @@
-# -------------------------------------------------
-# Base: pinned, reproducible Python 3.9
-# -------------------------------------------------
-FROM python@sha256:c65dadac8789fed40962578392e99a0528dcb868442c75d144e68ba858984837
+FROM python:3.9-slim
 
-WORKDIR /app
-
-# -------------------------------------------------
-# System dependencies
-# -------------------------------------------------
+# -------------------------
+# System deps
+# -------------------------
 RUN apt-get update && apt-get install -y \
-    curl \
+    wget \
     ca-certificates \
     bash \
     && rm -rf /var/lib/apt/lists/*
 
-# -------------------------------------------------
-# Install immudb (PINNED VERSION)
-# -------------------------------------------------
-ENV IMMUDB_VERSION=1.10.0
-
-RUN curl -L \
-    https://github.com/codenotary/immudb/releases/download/v${IMMUDB_VERSION}/immudb-linux-amd64 \
-    -o /usr/local/bin/immudb \
+# -------------------------
+# Install immudb (OFFICIAL DOC VERSION)
+# -------------------------
+RUN wget -q \
+    https://github.com/vchain-us/immudb/releases/download/v1.9DOM.1/immudb-v1.9DOM.1-linux-amd64 \
+    -O /usr/local/bin/immudb \
     && chmod +x /usr/local/bin/immudb
 
-# -------------------------------------------------
-# App setup
-# -------------------------------------------------
-RUN mkdir -p /app/data
-RUN mkdir -p /var/lib/immudb
+# -------------------------
+# immudb dirs
+# -------------------------
+RUN mkdir -p /var/lib/immudb /app
 
+# -------------------------
+# Python app
+# -------------------------
+WORKDIR /app
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
-
 COPY . .
 
-# Render only needs the HTTP port
-EXPOSE 8000
+# -------------------------
+# Ports
+# -------------------------
+EXPOSE 8000 8080 3322
 
-# -------------------------------------------------
-# Start immudb + backend
-# -------------------------------------------------
+# -------------------------
+# Start immudb + API
+# -------------------------
 CMD ["bash", "-c", "\
-    immudb server --auth & \
-    sleep 2 && \
-    python main_api.py \
+    immudb server --dir=/var/lib/immudb --auth & \
+    exec python main_api.py \
 "]
