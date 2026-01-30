@@ -69,10 +69,31 @@ from pathlib import Path
 
 #     return engine
 
+# def init_db():
+#     db_url = os.getenv(
+#         "SQLALCHEMY_DATABASE_URL",
+#         "sqlite:////app/data/lux_data_2026_map.db"
+#     )
+#     print("Using database:", db_url)
+
+#     engine = create_engine(
+#         db_url,
+#         connect_args={"check_same_thread": False} if db_url.startswith("sqlite") else {}
+#     )
+
+#     SessionLocal = sessionmaker(
+#         autocommit=False,
+#         autoflush=False,
+#         bind=engine,
+#     )
+
+#     Base.metadata.create_all(bind=engine)
+#     return SessionLocal
+
 def init_db():
     db_url = os.getenv("SQLALCHEMY_DATABASE_URL", "sqlite:///./lux_data_2026_map.db")
     print("Using database:", db_url)
-
+ 
     engine = create_engine(
         db_url,
         connect_args={"check_same_thread": False} if db_url.startswith("sqlite") else {}

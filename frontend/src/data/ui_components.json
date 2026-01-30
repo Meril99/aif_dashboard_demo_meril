@@ -1092,7 +1092,7 @@
         },
         {
           "class_list": ["paragraph"],
-          "content": "Here you can download the entire logs in pdf format based off of the interactions with the dashboard.",
+          "content": "",
           "id": "p_3",
           "tag": "p",
           "type": "text"
